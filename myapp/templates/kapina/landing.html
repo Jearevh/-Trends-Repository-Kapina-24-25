@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,24 +14,27 @@
             background-color: #f8f8f8;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
         }
         .main-content {
-            flex-grow: 1;
+            width: 100%;
+            max-width: 1200px; /* Add max-width for content */
+            box-sizing: border-box;
         }
 
         /* Header Section */
         .header {
             width: 100%;
-            max-width: 100%;
             height: 130px;
             position: relative;
             background: rgba(111, 78, 55, 0.93); 
             margin-bottom: 20px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 30px; /* Adjust padding for spacing */
             align-items: center;
         }
         
@@ -39,15 +43,16 @@
             width: 100%;
             height: 105px;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start; /* Align logo to the left */
             align-items: center;
-            padding: 20px 30px;
         }
         
         /* Logo Style */
         .logo img {
             width: 100px;
-            height: 40px;
+            max-width: 120px;
+            height: auto;
+            object-fit: contain;
         }
         
         /* Search Bar */
@@ -62,6 +67,10 @@
             padding: 0 20px;
             align-items: center;
             justify-content: center;
+            position: absolute;
+            top: 50%; /* Center it vertically */
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center it horizontally */
         }
         
         .search-left, .search-right {
@@ -106,9 +115,9 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             padding: 20px;
-            margin-bottom: 80px; 
+            margin: 0 auto;
             box-sizing: border-box;
-            overflow-x: hidden; 
+            overflow-x: hidden;
         }
         
         .card {
@@ -238,18 +247,20 @@
             background: rgba(111, 78, 55, 1);
             cursor: pointer;
         }
-        
-
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
-    <div class="header">
-        <div class="header-content">
-            <div class="logo">
-                <img src="https://placehold.co/95x43" alt="Logo">
+    <!-- Main Content Wrapper -->
+    <div class="main-content">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo">
+                </div>
             </div>
+
             <div class="search-container">
                 <div class="search-left">
                     <div>Where</div>
@@ -262,28 +273,29 @@
                 </div>
             </div>
         </div>
-        <div class="header-divider"></div>
-    </div>
 
-    <!-- Cards Section -->
-    <div class="cards-container" id="cards-container">
-        <div class="card">
-            <img src="https://placehold.co/328x213" alt="Coffee Shop">
-            <div class="card-header">
-                <div class="card-title">Kapehan Nindo</div>
-                <div class="card-location-hours">
-                    <div class="card-address">Ateneo Avenue</div>
-                    <div class="separator"></div>
-                    <div class="card-hours">8AM-11PM</div>
+        <div class="header-divider"></div>
+
+        <!-- Cards Section -->
+        <div class="cards-container" id="cards-container">
+            <div class="card">
+                <img src="https://placehold.co/328x213" alt="Coffee Shop">
+                <div class="card-header">
+                    <div class="card-title">Kapehan Nindo</div>
+                    <div class="card-location-hours">
+                        <div class="card-address">Ateneo Avenue</div>
+                        <div class="separator"></div>
+                        <div class="card-hours">8AM-11PM</div>
+                    </div>
                 </div>
             </div>
+            <!-- Add more cards here as needed -->
         </div>
-        <!-- Add more cards here as needed -->
-    </div>
 
-    <!-- Show More Button -->
-    <div class="show-more">
-        <div class="show-more-text">Show more</div>
+        <!-- Show More Button -->
+        <div class="show-more">
+            <div class="show-more-text">Show more</div>
+        </div>
     </div>
 
     <!-- Footer Section -->
@@ -294,7 +306,6 @@
             <div class="footer-links">Terms of Privacy</div>
         </div>
     </div>
-
 
     <script>
         const coffeeShops = [
@@ -326,6 +337,6 @@
             cardsContainer.appendChild(card);
         });
     </script>
-    
+
 </body>
 </html>
