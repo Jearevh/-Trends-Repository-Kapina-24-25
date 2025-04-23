@@ -2,10 +2,330 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kapina Landing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop Map</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .main-content {
+            flex-grow: 1;
+        }
+
+        /* Header Section */
+        .header {
+            width: 100%;
+            max-width: 100%;
+            height: 130px;
+            position: relative;
+            background: rgba(111, 78, 55, 0.93); 
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Header Content */
+        .header-content {
+            width: 100%;
+            height: 105px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 30px;
+        }
+        
+        /* Logo Style */
+        .logo img {
+            width: 100px;
+            height: 40px;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            display: flex;
+            width: 480px;
+            max-width: 100%;
+            height: 65px;
+            background: white;
+            border-radius: 500px;
+            outline: 1px solid #D3D3D3;
+            padding: 0 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-left, .search-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            flex: 1;
+            padding: 15px;
+        }
+        
+        .search-left div, .search-right div {
+            font-size: 12px;
+            font-weight: 600;
+            color: #222222;
+        }
+        
+        .search-left div:last-child, .search-right div:last-child {
+            font-size: 14px;
+            font-weight: 400;
+            color: #717171;
+        }
+        
+        .search-divider {
+            width: 1px;
+            height: 32px;
+            background-color: rgb(0, 0, 0, 0.5);
+            margin: 0 12px;
+        }
+        
+        /* Header Divider */
+        .header-divider {
+            width: 100%;
+            height: 1px;
+            background-color: #FAF9F6;
+            margin-top: 10px;
+        }
+        
+        /* Cards Section */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 80px; 
+            box-sizing: border-box;
+            overflow-x: hidden; 
+        }
+        
+        .card {
+            position: relative;
+            width: 100%; 
+            height: 289px;
+            box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.12);
+            border-radius: 12px;
+            background-color: #B0B0B0;
+            overflow: hidden; 
+        }
+        
+        .card img {
+            width: 100%;
+            height: 213px;
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            padding: 16px;
+        }
+        
+        .card-location-hours {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #222222;
+        }
+        
+        .card-address,
+        .card-hours {
+            font-size: 14px;
+            color: #5E5E5E;
+        }
+        
+        .separator {
+            width: 2px;
+            height: 2px;
+            background-color: #5E5E5E;
+            border-radius: 50%;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .cards-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .cards-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        
+            .card {
+                height: auto; /* Adjust card height to fit content */
+            }
+        }
+        
+        /* Footer Section */
+        .footer {
+            width: 100%;
+            background: #FAF9F6;
+            overflow: hidden;
+            position: relative;
+            padding: 30px 0 0px;
+            margin-top: auto; /* Push footer to the bottom */
+            box-sizing: border-box;
+        }
+        
+        /* Footer Content */
+        .footer-content {
+            width: 100%;
+            height: 100px;
+            background: #E2E1DE;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* Footer Links */
+        .footer-links {
+            text-align: center;
+            color: black;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        
+        /* Show More Button */
+        .show-more {
+            padding: 16px 24px;
+            background: rgba(111, 78, 55, 0.93);
+            border-radius: 8px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            width: 100px;
+        }
+        
+        /* Show More Text */
+        .show-more-text {
+            color: #FAF9F6;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        
+        /* Hover Effect */
+        .show-more:hover {
+            background: rgba(111, 78, 55, 1);
+            cursor: pointer;
+        }
+        
+
+    </style>
 </head>
 <body>
-    <h1>Welcome to Kapina</h1>
-    <p>Discover coffee shops around you!</p>
+
+    <!-- Header Section -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="https://placehold.co/95x43" alt="Logo">
+            </div>
+            <div class="search-container">
+                <div class="search-left">
+                    <div>Where</div>
+                    <div>Search Coffee Shops</div>
+                </div>
+                <div class="search-divider"></div>
+                <div class="search-right">
+                    <div>Drink</div>
+                    <div>Find your taste</div>
+                </div>
+            </div>
+        </div>
+        <div class="header-divider"></div>
+    </div>
+
+    <!-- Cards Section -->
+    <div class="cards-container" id="cards-container">
+        <div class="card">
+            <img src="https://placehold.co/328x213" alt="Coffee Shop">
+            <div class="card-header">
+                <div class="card-title">Kapehan Nindo</div>
+                <div class="card-location-hours">
+                    <div class="card-address">Ateneo Avenue</div>
+                    <div class="separator"></div>
+                    <div class="card-hours">8AM-11PM</div>
+                </div>
+            </div>
+        </div>
+        <!-- Add more cards here as needed -->
+    </div>
+
+    <!-- Show More Button -->
+    <div class="show-more">
+        <div class="show-more-text">Show more</div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-links">Contact</div>
+            <div class="footer-links">About Us</div>
+            <div class="footer-links">Terms of Privacy</div>
+        </div>
+    </div>
+
+
+    <script>
+        const coffeeShops = [
+            { title: "Kapehan Nindo", address: "Ateneo Avenue", hours: "8AM-11PM" },
+            { title: "Cafe Aroma", address: "Katipunan Street", hours: "9AM-10PM" },
+            { title: "Bean Haven", address: "Pioneer Road", hours: "7AM-9PM" },
+            { title: "Brews Brothers", address: "Downtown", hours: "6AM-6PM" },
+            { title: "Sip Station", address: "Main Avenue", hours: "10AM-10PM" },
+            { title: "Cafe Sol", address: "Sunrise Blvd", hours: "8AM-8PM" },
+            { title: "Grounded Beans", address: "Baywalk", hours: "11AM-11PM" },
+        ];
+    
+        const cardsContainer = document.getElementById('cards-container');
+    
+        coffeeShops.forEach(shop => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="https://placehold.co/328x213" alt="Coffee Shop">
+                <div class="card-header">
+                    <div class="card-title">${shop.title}</div>
+                    <div class="card-location-hours">
+                        <div class="card-address">${shop.address}</div>
+                        <div class="separator"></div>
+                        <div class="card-hours">${shop.hours}</div>
+                    </div>
+                </div>
+            `;
+            cardsContainer.appendChild(card);
+        });
+    </script>
+    
 </body>
 </html>
