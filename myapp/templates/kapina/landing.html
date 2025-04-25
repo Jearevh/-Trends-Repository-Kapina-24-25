@@ -1,63 +1,14 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <title>Coffee Shop Map</title>
-</head>
-<body>
+<!-- templates/landing.html -->
+{% extends 'kapina/base.html' %}
 
-<!-- Header Section -->
-<div class="header">
-    <div class="header-content">
-        <a href="landing.html" class="logo">
-            <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo">
-        </a>
-    </div>
+{% block title %}Landing Page{% endblock %}
 
-    <div class="search-container">
-        <div class="search-left">
-            <div>Where</div>
-            <div>Search Coffee Shops</div>
-        </div>
-        <div class="search-divider"></div>
-        <div class="search-right">
-            <div>Drink</div>
-            <div>Find your taste</div>
-        </div>
-        <button class="search-btn">
-            <i class="fas fa-search"></i>
-        </button>
-    </div>
+{% block content %}
+<div class="cards-container" id="cards-container"></div>
 
-    <div class="profile-btn">
-        <i class="fas fa-user-circle"></i>
-    </div>
-</div>
-
-<div class="header-divider"></div>
-
-<!-- Cards Section -->
-<div class="cards-container" id="cards-container">
-</div>
-
-<!-- Show More Button -->
 <div class="show-more">
     <div class="show-more-text">Show more</div>
 </div>
-
-<!-- Footer Section -->
-<div class="footer">
-    <div class="footer-content">
-        <a href="#" class="footer-links">Contact</a>
-        <a href="#" class="footer-links">About Us</a>
-        <a href="#" class="footer-links">Terms of Privacy</a>
-    </div>
-</div>
-
 
 <script>
     const coffeeShops = [
@@ -89,6 +40,4 @@
         cardsContainer.appendChild(card);
     });
 </script>
-
-</body>
-</html>
+{% endblock %}
