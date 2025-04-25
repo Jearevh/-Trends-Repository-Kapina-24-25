@@ -1,0 +1,54 @@
+{% load static %}
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Kapina{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <div class="header-content">
+            <a href="{% url 'landing' %}" class="logo">
+                <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo">
+            </a>
+        </div>
+
+        <div class="search-container">
+            <div class="search-left">
+                <div>Where</div>
+                <div>Search Coffee Shops</div>
+            </div>
+            <div class="search-divider"></div>
+            <div class="search-right">
+                <div>Drink</div>
+                <div>Find your taste</div>
+            </div>
+            <button class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <div class="profile-btn">
+            <i class="fas fa-user-circle"></i>
+        </div>
+    </div>
+
+    <div class="header-divider"></div>
+
+    <!-- Page Specific Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <div class="footer-content">
+            <a href="#" class="footer-links">Contact</a>
+            <a href="#" class="footer-links">About Us</a>
+            <a href="#" class="footer-links">Terms of Privacy</a>
+        </div>
+    </div>
+</body>
+</html>
