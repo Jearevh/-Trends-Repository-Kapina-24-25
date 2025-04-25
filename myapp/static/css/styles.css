@@ -119,16 +119,10 @@ body {
     transition: transform 0.2s ease;
     position: absolute;
     top: 50%; /* Vertically center */
-    right: 30px; /* Positioned to the right */
+    right: 80px; /* Positioned to the right */
     transform: translateY(-50%); /* Center it vertically */
     z-index: 2; /* Ensure it's above other content */
 }
-
-
-.profile-btn:hover {
-    transform: scale(1.1);
-}git status
-
 
 /* Header Divider */
 .header-divider {
@@ -239,18 +233,26 @@ body {
     height: 100px;
     background: #E2E1DE;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly; /* Adjusted to reduce space */
     align-items: center;
     padding: 20px;
+    flex-wrap: wrap;
+    box-sizing: border-box;
 }
 
 /* Footer Links */
 .footer-links {
+    margin: 0 0px;  /* Adjusted margin between links */
     text-align: center;
     color: black;
     font-size: 14px;
     font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;  /* Ensure the links share the space evenly */
 }
+
 
 /* Show More Button */
 .show-more {
