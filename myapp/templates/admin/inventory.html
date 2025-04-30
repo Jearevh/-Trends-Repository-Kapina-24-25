@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Menu</title>
+  <link rel="stylesheet" href="{% static 'admin css/inventory.css' %}" />
+</head>
+<body>
+  <header class="admin-header">
+    <div class="logo">Kapina</div>
+    <a href="#" class="back-to-customer">← Return to Customer View</a>
+  </header>
+
+  <aside class="sidebar">
+    <nav>
+      <ul>
+        <li><a href="#">Dashboard</a></li>
+        <li class="active"><a href="#">Inventory</a></li>
+        <li><a href="#">Orders</a></li>
+        <li><a href="#">Payments</a></li>
+        <li><a href="#">Users</a></li>
+        <li><a href="#">Messages</a></li>
+        <li><a href="#">Team</a></li>
+      </ul>
+    </nav>
+    <div class="admin-profile">
+      <div class="avatar"></div>
+      <div>
+        <p class="admin-name">Lisa Manoban</p>
+        <p class="admin-role">Staff</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="menu-management">
+    <h1>Manage Inventory</h1>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="menu-img"></div>
+        <div class="menu-info">
+          <h3>Coffee Latte</h3>
+          <p class="price">₱120.00</p>
+          <p class="desc">Rich espresso with steamed milk</p>
+          <button>Edit</button>
+        </div>
+      </div>
+
+      <!-- Duplicate the card above for other menu items -->
+    </div>
+    <button class="add-button">+ Add New Product</button>
+  </main>
+</body>
+</html>
