@@ -1,5 +1,3 @@
-/* base.css */
-
 /* General */
 body {
     font-family: 'Inter', sans-serif;
@@ -36,10 +34,10 @@ body {
 
 .header-content {
     width: 100%;
-    height: 105px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex-start; /* Align logo to the left */
     align-items: center;
+    position: relative;
 }
 
 .logo img {
@@ -49,11 +47,84 @@ body {
     object-fit: contain;
 }
 
+/* Header Divider */
 .header-divider {
     width: 100%;
     height: 1px;
     background-color: #FAF9F6;
     margin-top: 10px;
+}
+
+/* Search Bar */
+.search-container {
+    display: flex;
+    width: 480px;
+    max-width: 100%;
+    height: 65px;
+    background: white;
+    border-radius: 500px;
+    outline: 1px solid #D3D3D3;
+    padding: 0 20px;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center it horizontally and vertically */
+    z-index: 1; /* Ensure it is above the background but not on top of the logo */
+}
+
+.search-left,
+.search-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 1;
+    padding: 8px 12px;
+}
+
+.search-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 4px; /* This controls spacing above the input */
+}
+
+.search-input {
+    all: unset;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: #222222;
+    width: 100%;
+    line-height: 1.4;
+}
+
+.search-input:focus,
+.search-input:active {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+
+.search-left div, .search-right div {
+    font-size: 12px;
+    font-weight: 600;
+    color: #222222;
+}
+
+.search-left div:last-child, .search-right div:last-child {
+    font-size: 14px;
+    font-weight: 400;
+    color: #717171;
+}
+
+.search-divider {
+    width: 1px;
+    height: 32px;
+    background-color: rgb(0, 0, 0, 0.5);
+    margin: 0 12px;
 }
 
 /* Buttons */
@@ -73,6 +144,7 @@ body {
     margin-left: 10px;
 }
 
+/* Profile Button */
 .profile-btn {
     font-size: 26px;
     color: white;
@@ -83,12 +155,15 @@ body {
     justify-content: center;
     transition: transform 0.2s ease;
     position: absolute;
-    top: 50%;
-    right: 80px;
-    transform: translateY(-50%);
-    z-index: 2;
+    top: 50%;  /* Vertically center */
+    right: 80px;  /* Positioned to the right */
+    transform: translateY(-50%);  /* Vertically center */
+    z-index: 2;  /* Ensure it's above other content */
 }
 
+
+
+/* Show More Button */
 .show-more {
     padding: 16px 24px;
     background: rgba(111, 78, 55, 0.93);
@@ -100,6 +175,7 @@ body {
     width: 100px;
 }
 
+/* Show More Text */
 .show-more-text {
     color: #FAF9F6;
     font-size: 13px;
@@ -113,13 +189,13 @@ body {
 
 /* Footer */
 .footer {
-    width: 100%;
+    width: 100vw; /* Ensure it takes the full width of the viewport */
     background: #FAF9F6;
-    overflow: hidden;
     position: relative;
     padding: 30px 0 0px;
     margin-top: auto;
     box-sizing: border-box;
+    left: 0;
 }
 
 .footer-content {
@@ -135,7 +211,7 @@ body {
 }
 
 .footer-links {
-    margin: 0 0px;
+    margin: 0;
     text-align: center;
     color: black;
     font-size: 14px;

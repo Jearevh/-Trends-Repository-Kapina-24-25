@@ -5,8 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Kapina{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'user css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'user css/landing.css' %}">
 </head>
 <body>
     <!-- Header Section -->
@@ -19,14 +20,15 @@
 
         <div class="search-container">
             <div class="search-left">
-                <div>Where</div>
-                <div>Search Coffee Shops</div>
+                <label class="search-label">Where</label>
+                <input type="text" placeholder="Search Coffee Shops" class="search-input">
             </div>
             <div class="search-divider"></div>
             <div class="search-right">
-                <div>Drink</div>
-                <div>Find your taste</div>
+                <label class="search-label">Drink</label>
+                <input type="text" placeholder="Find your taste" class="search-input">
             </div>
+            
             <button class="search-btn">
                 <i class="fas fa-search"></i>
             </button>
