@@ -1,0 +1,91 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  background: #f5f5f5;
+}
+
+header.admin-header {
+  position: fixed;
+  top: 0;
+  left: 200px;
+  right: 0;
+  height: 60px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.logo {
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.back-to-customer {
+  text-decoration: underline;
+  color: #000;
+  font-weight: bold;
+}
+
+.sidebar {
+  width: 200px;
+  background: #FAF9F6;
+  padding: 20px;
+  height: 100vh;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar nav ul li {
+  margin: 12px 0;
+}
+
+.sidebar nav ul li.active a {
+  background: rgba(213, 164, 115, 0.5);
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.sidebar nav ul li a {
+  color: #000;
+  font-weight: 700;
+  text-decoration: none;
+  display: block;
+}
+
+.admin-profile {
+  position: absolute;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-profile .avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.admin-name {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.admin-role {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,32 @@
+{% extends 'admins/base.html' %}
+{% load static %}
+
+{% block title %}Inventory{% endblock %}
+
+{% block extra_css %}
+  <!-- this will now load inventory.css -->
+  <link rel="stylesheet" href="{% static 'admin_css/inventory.css' %}">
+
+  </style>
+  
+{% endblock %}
+
+
+{% block content %}
+  <div class="menu-management">
+    <h1>Manage Inventory</h1>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="menu-img"></div>
+        <div class="menu-info">
+          <h3>Coffee Latte</h3>
+          <p class="price">₱120.00</p>
+          <p class="desc">Rich espresso with steamed milk</p>
+          <button>Edit</button>
+        </div>
+      </div>
+      <!-- Add more cards here -->
+    </div>
+    <button class="add-button">+ Add New Product</button>
+  </div>
+{% endblock %}
