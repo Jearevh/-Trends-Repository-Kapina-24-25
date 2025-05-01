@@ -15,6 +15,7 @@ body {
 .main-content {
     width: 100%;
     box-sizing: border-box;
+    
 }
 
 /* Header */
@@ -73,6 +74,8 @@ body {
     left: 50%;
     transform: translate(-50%, -50%); 
     z-index: 1;
+    transform: translate(-50%, -50%); /* Center it horizontally and vertically */
+    z-index: 1; /* Ensure it is above the background but not on top of the logo */
 }
 
 .search-left,
@@ -87,6 +90,7 @@ body {
 
 .search-label {
     font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     color: #222222;
     margin-bottom: 4px; /* This controls spacing above the input */
