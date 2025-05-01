@@ -5,27 +5,30 @@
   <meta charset="UTF-8">
   <title>{% block title %}Admin Panel{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'admin_css/base.css' %}">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
+
   <!-- Add the extra_css block here -->
   {% block extra_css %}{% endblock %}
-  
 </head>
 <body>
   <header class="admin-header">
-    <div class="logo">Kapina</div>
-    <a href="#" class="back-to-customer">← Return to Customer View</a>
+    <a href="{% url 'landing' %}" class="back-to-customer">← Return to Customer View</a>
   </header>
 
   <aside class="sidebar">
+    <a href="{% url 'landing' %}" class="logo">
+      <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo">
+    </a>
     <nav>
       <ul>
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Inventory</a></li>
-        <li><a href="#">Orders</a></li>
-        <li><a href="#">Payments</a></li>
-        <li><a href="#">Users</a></li>
-        <li><a href="#">Messages</a></li>
-        <li><a href="#">Team</a></li>
+        <li><a href="#"><i class="la la-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="#"><i class="la la-clipboard-list"></i> Orders</a></li>
+        <li><a href="#"><i class="la la-clipboard-check"></i> Inventory</a></li>
+        <li><a href="#"><i class="la la-wallet"></i> Payments</a></li>
+        <li><a href="#"><i class="la la-users"></i> Users</a></li>
+        <li><a href="#"><i class="la la-comment-dots"></i> Messages</a></li>
+        <li><a href="#"><i class="la la-user-friends"></i> Team</a></li>
       </ul>
     </nav>
     <div class="admin-profile">

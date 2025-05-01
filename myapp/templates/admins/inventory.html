@@ -15,15 +15,23 @@
 {% block content %}
   <div class="menu-management">
     <h1>Manage Inventory</h1>
+    <div class="search-bar">
+      <span class="search-icon"><i class="las la-search"></i></span>
+      <input type="text" placeholder="Search products..." />
+    </div>
+    
     <div class="menu-grid">
       <div class="menu-card">
-        <div class="menu-img"></div>
         <div class="menu-info">
-          <h3>Coffee Latte</h3>
-          <p class="price">₱120.00</p>
+          <div class="menu-header">
+            <h3>Coffee Latte</h3>
+            <span class="price">₱120.00</span>
+          </div>
           <p class="desc">Rich espresso with steamed milk</p>
           <button>Edit</button>
         </div>
+        <div class="menu-img"></div>
+      </div>
       </div>
       <!-- Add more cards here -->
     </div>
