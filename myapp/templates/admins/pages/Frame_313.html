@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapina Inventory Management</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #faf9f6;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            position: fixed;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            padding: 0 22px;
+            margin-bottom: 50px;
+        }
+        
+        .logo-icon {
+            width: 44px;
+            height: 63px;
+        }
+        
+        .logo-text {
+            width: 117px;
+            height: 52px;
+            margin-left: 10px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 27px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(213, 164, 115, 0.3);
+        }
+        
+        .nav-item.active {
+            background-color: rgba(213, 164, 115, 0.5);
+        }
+        
+        .nav-icon {
+            width: 27px;
+            height: 27px;
+            margin-right: 10px;
+        }
+        
+        .nav-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000000;
+        }
+        
+        .user-profile {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            padding: 20px 27px;
+        }
+        
+        .user-avatar {
+            width: 58px;
+            height: 57px;
+            border-radius: 28px;
+        }
+        
+        .user-info {
+            margin-left: 10px;
+        }
+        
+        .user-name {
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            color: #000000;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .main-content {
+            margin-left: 220px;
+            padding: 30px;
+            width: calc(100% - 220px);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .return-link {
+            display: flex;
+            align-items: center;
+            text-decoration: underline;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000000;
+            cursor: pointer;
+        }
+        
+        .return-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 5px;
+        }
+        
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            color: #000000;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            width: 500px;
+            height: 40px;
+            background-color: #faf9f6;
+            border: 1px solid #d9d9d9;
+            border-radius: 5px;
+            padding: 0 10px;
+            margin-bottom: 30px;
+        }
+        
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        
+        .search-input {
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            color: rgba(0, 0, 0, 0.5);
+            width: 20vh;
+            outline: none;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            width: 450px;
+            height: 250px;
+            border-radius: 12px;
+            border: 5px solid #d9d9d9; /* Add border here */
+            position: relative;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            
+        }
+        
+        .product-info {
+            width: 60%;
+        }
+        
+        .product-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #222222;
+            margin-bottom: 5px;
+        }
+        
+        .product-price {
+            font-size: 20px;
+            font-weight: 200;
+            color: #222222;
+            margin-bottom: 15px;
+        }
+        
+        .product-description {
+            font-size: 14px;
+            font-weight: 100;
+            color: #000000;
+            line-height: 1.3;
+        }
+        
+        .product-image {
+            width: 156px;
+            height: 173px;
+            border-radius: 14px;
+            object-fit: cover;
+        }
+        
+        .quick-view-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 100px;
+            width: 118px;
+            height: 48px;
+            background-color: rgba(111, 78, 55, 0.93);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            opacity: 1; /* Change opacity to 1 */
+        }
+        .product-card:hover .quick-view-btn {
+            opacity: 1;
+        }
+        
+        .quick-view-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="../assets/images/img_kapina_icon_logo.png" alt="Kapina Icon" class="logo-icon">
+            <img src="../assets/images/img_kapina_logo.png" alt="Kapina" class="logo-text">
+        </div>
+    
+        <a href="dashdash.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_vector.svg" alt="Orders Icon" class="nav-icon">
+                <span class="nav-text">Orders</span>
+            </div>
+        </a>
+    
+        <a href="Frame_313.html" class="nav-link">
+            <div class="nav-item active">
+                <img src="../assets/images/img_materialsymbolsinventory.svg" alt="Inventory Icon" class="nav-icon">
+                <span class="nav-text">Inventory</span>
+            </div>
+        </a>
+    
+        <a href="payments.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_materialsymbolspayments.svg" alt="Payments Icon" class="nav-icon">
+                <span class="nav-text">Payments</span>
+            </div>
+        </a>
+    
+        <a href="users.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_mdiusers.svg" alt="Users Icon" class="nav-icon">
+                <span class="nav-text">Users</span>
+            </div>
+        </a>
+    
+        <a href="messages.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_tablermessages.svg" alt="Messages Icon" class="nav-icon">
+                <span class="nav-text">Messages</span>
+            </div>
+        </a>
+    
+        <a href="team.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_riteamfill.svg" alt="Team Icon" class="nav-icon">
+                <span class="nav-text">Team</span>
+            </div>
+        </a>
+    
+        <div class="user-profile">
+            <img src="../assets/images/img_ellipse_18.png" alt="User Avatar" class="user-avatar">
+            <div class="user-info">
+                <div class="user-name">Lisa Manoban</div>
+                <div class="user-role">Staff</div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="main-content">
+        <div class="header">
+            <div></div>
+            <div class="return-link">
+                <img src="../assets/images/img_letsiconsreturn.svg" alt="Return Icon" class="return-icon">
+                <span>Return to Customer View</span>
+            </div>
+        </div>
+        
+        <h1 class="page-title">Manage Inventory</h1>
+        
+        <div class="search-bar">
+            <img src="../assets/images/img_icbaselinesearch.svg" alt="Search Icon" class="search-icon">
+            <input type="text" placeholder="Search products..." class="search-input">
+        </div>
+        
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">Spanish Latte</h2>
+                    <div class="product-price">₱ 49</div>
+                    <p class="product-description">--Bestseller-- Flavor profile: creamy, sweet, smooth, bold, indulgent</p>
+                </div>
+                <img src="../assets/images/img_1x1.png" alt="Spanish Latte" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">Caramel Macchiato</h2>
+                    <div class="product-price">₱ 49</div>
+                    <p class="product-description">--Recommended-- Flavor profile: caramel, strong, less sweet, familiar</p>
+                </div>
+                <img src="../assets/images/img_1x1_1.png" alt="Caramel Macchiato" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">Matcha Latte</h2>
+                    <div class="product-price">₱ 49</div>
+                    <p class="product-description">Matcha Latte - Non coffee</p>
+                </div>
+                <img src="../assets/images/img_1x1_173x156.png" alt="Matcha Latte" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">Vanilla Americano</h2>
+                    <div class="product-price">₱ 49</div>
+                    <p class="product-description">Flavor profile: dairy-free, strong, very strong. Your iced americano with a twist of vanilla.</p>
+                </div>
+                <img src="../assets/images/img_1x1_2.png" alt="Vanilla Americano" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Return to customer view functionality
+        document.querySelector('.return-link').addEventListener('click', function() {
+            alert('Returning to customer view...');
+        });
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(card => {
+                const productName = card.querySelector('.product-name').textContent.toLowerCase();
+                const productDesc = card.querySelector('.product-description').textContent.toLowerCase();
+                
+                if (productName.includes(searchTerm) || productDesc.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Quick view functionality
+        document.querySelectorAll('.quick-view-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const productName = this.closest('.product-card').querySelector('.product-name').textContent;
+                alert(`Quick view for ${productName}`);
+            });
+        });
+    </script>
+</body>
+</html>
