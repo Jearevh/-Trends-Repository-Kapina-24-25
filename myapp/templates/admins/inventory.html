@@ -1,71 +1,6 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kapina Inventory Management</title>
-    <link rel="stylesheet" href="{% static 'admin_css/inventory.css' %}">
-</head>
-<body>
-    <div class="sidebar">
-        <div class="logo-container">
-            <img src="{% static 'images/img_kapina_icon_logo.png' %}" alt="Kapina Icon" class="logo-icon">
-            <img src="{% static 'images/img_kapina_logo.png' %}" alt="Kapina" class="logo-text">
-        </div>
-    
-        <a href="dashdash.html" class="nav-link">
-            <div class="nav-item">
-                <img src="{% static 'images/img_vector.svg' %}" alt="Orders Icon" class="nav-icon">
-                <span class="nav-text">Orders</span>
-            </div>
-        </a>
-    
-        <a href="Frame_313.html" class="nav-link">
-            <div class="nav-item active">
-                <img src="{% static 'images/img_materialsymbolsinventory.svg' %}" alt="Inventory Icon" class="nav-icon">
-                <span class="nav-text">Inventory</span>
-            </div>
-        </a>
-    
-        <a href="payments.html" class="nav-link">
-            <div class="nav-item">
-                <img src="{% static 'images/img_materialsymbolspayments.svg' %}" alt="Payments Icon" class="nav-icon">
-                <span class="nav-text">Payments</span>
-            </div>
-        </a>
-    
-        <a href="users.html" class="nav-link">
-            <div class="nav-item">
-                <img src="{% static 'images/img_mdiusers.svg' %}" alt="Users Icon" class="nav-icon">
-                <span class="nav-text">Users</span>
-            </div>
-        </a>
-    
-        <a href="messages.html" class="nav-link">
-            <div class="nav-item">
-                <img src="{% static 'images/img_tablermessages.svg' %}" alt="Messages Icon" class="nav-icon">
-                <span class="nav-text">Messages</span>
-            </div>
-        </a>
-    
-        <a href="team.html" class="nav-link">
-            <div class="nav-item">
-                <img src="{% static 'images/img_riteamfill.svg' %}" alt="Team Icon" class="nav-icon">
-                <span class="nav-text">Team</span>
-            </div>
-        </a>
-    
-        <div class="user-profile">
-            <img src="{% static 'images/img_ellipse_18.png' %}" alt="User Avatar" class="user-avatar">
-            <div class="user-info">
-                <div class="user-name">Lisa Manoban</div>
-                <div class="user-role">Staff</div>
-            </div>
-        </div>
-    </div>
-    
-    
+{% extends 'admins/base.html' %}
+{% load static %} 
+{% block content %}
     <div class="main-content">
         <div class="header">
             <div></div>
@@ -132,48 +67,17 @@
                     <span class="quick-view-text">Quick view</span>
                 </div>
             </div>
+
+            <a href="{% url 'addproduct' %}" class="product-card add-new-product">
+                <div class="product-info">
+                    <h2 class="product-name">+ Add New Product</h2>
+                    <div class="product-price"></div>
+                    <p class="product-description">Click here to add a new product to the inventory.</p>
+                </div>
+                <div class="add-product-image">
+                    <img src="{% static 'images/img_materialsymbolsadd.svg' %}" alt="Add Product" class="product-image">
+                </div>
+            </a>
         </div>
     </div>
-
-    <script>
-        // Navigation functionality
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.nav-item').forEach(navItem => {
-                    navItem.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
-        });
-
-        // Return to customer view functionality
-        document.querySelector('.return-link').addEventListener('click', function() {
-            // Removed alert
-        });
-
-        // Search functionality
-        document.querySelector('.search-input').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            document.querySelectorAll('.product-card').forEach(card => {
-                const productName = card.querySelector('.product-name').textContent.toLowerCase();
-                const productDesc = card.querySelector('.product-description').textContent.toLowerCase();
-                
-                if (productName.includes(searchTerm) || productDesc.includes(searchTerm)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-
-        // Quick view functionality
-        document.querySelectorAll('.quick-view-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const productName = this.closest('.product-card').querySelector('.product-name').textContent;
-                alert(`Quick view for ${productName}`);
-            });
-        });
-    </script>
-</body>
-</html>
+{% endblock %}

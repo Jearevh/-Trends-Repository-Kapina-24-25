@@ -1,72 +1,50 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kapina Admin Dashboard</title>
+    <title>{% block title %}Kapina Inventory Management{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'admin_css/base.css' %}">
     <link rel="stylesheet" href="{% static 'admin_css/inventory.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div class="sidebar">
         <div class="logo-container">
-            <img src="../assets/images/img_kapina_icon_logo.png" alt="Kapina Icon" class="logo-icon">
-            <img src="../assets/images/img_kapina_logo.png" alt="Kapina" class="logo-text">
+            <img src="{% static 'images/img_kapina_icon_logo.png' %}" alt="Kapina Icon" class="logo-icon">
+            <img src="{% static 'images/img_kapina_logo.png' %}" alt="Kapina" class="logo-text">
         </div>
-        <a href="dashdash.html" class="nav-link">
+
+        <a href="{% url 'shop_page' %}" class="nav-link">
             <div class="nav-item">
-                <img src="../assets/images/img_vector.svg" alt="Orders Icon" class="nav-icon">
-                <span class="nav-text">Orders</span>
+                <img src="{% static 'images/img_vector.svg' %}" alt="Shop Icon" class="nav-icon">
+                <span class="nav-text">Shop Page</span>
             </div>
         </a>
-        <a href="inventory.html" class="nav-link">
+
+        <a href="{% url 'inventory' %}" class="nav-link">
             <div class="nav-item active">
-                <img src="../assets/images/img_materialsymbolsinventory.svg" alt="Inventory Icon" class="nav-icon">
+                <img src="{% static 'images/img_materialsymbolsinventory.svg' %}" alt="Inventory Icon" class="nav-icon">
                 <span class="nav-text">Inventory</span>
             </div>
         </a>
-        <a href="payments.html" class="nav-link">
+
+        <a href="{% url 'users' %}" class="nav-link">
             <div class="nav-item">
-                <img src="../assets/images/img_materialsymbolspayments.svg" alt="Payments Icon" class="nav-icon">
-                <span class="nav-text">Payments</span>
-            </div>
-        </a>
-        <a href="users.html" class="nav-link">
-            <div class="nav-item">
-                <img src="../assets/images/img_mdiusers.svg" alt="Users Icon" class="nav-icon">
+                <img src="{% static 'images/img_mdiusers.svg' %}" alt="Users Icon" class="nav-icon">
                 <span class="nav-text">Users</span>
             </div>
         </a>
-        <a href="messages.html" class="nav-link">
-            <div class="nav-item">
-                <img src="../assets/images/img_tablermessages.svg" alt="Messages Icon" class="nav-icon">
-                <span class="nav-text">Messages</span>
-            </div>
-        </a>
-        <a href="team.html" class="nav-link">
-            <div class="nav-item">
-                <img src="../assets/images/img_riteamfill.svg" alt="Team Icon" class="nav-icon">
-                <span class="nav-text">Team</span>
-            </div>
-        </a>
+
         <div class="user-profile">
-            <img src="../assets/images/img_ellipse_18.png" alt="User Avatar" class="user-avatar">
+            <img src="{% static 'images/img_ellipse_18.png' %}" alt="User Avatar" class="user-avatar">
             <div class="user-info">
                 <div class="user-name">Lisa Manoban</div>
                 <div class="user-role">Staff</div>
             </div>
         </div>
     </div>
-    <div class="header">
-        <div class="return-link">
-            <img src="../assets/images/img_letsiconsreturn.svg" alt="Return Icon" class="return-icon">
-            <span>Return to Customer View</span>
-        </div>
-    </div>
-    <div class="content">
-        {{ content }}
-    </div>
+    {% block content %}{% endblock %}
 </body>
 </html>

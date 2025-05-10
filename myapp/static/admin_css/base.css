@@ -6,42 +6,36 @@
 }
 
 body {
+    background-color: #faf9f6;
     display: flex;
 }
 
 .sidebar {
     width: 220px;
     height: 100vh;
+    position: fixed;
     border-right: 1px solid #e0e0e0;
     padding: 20px 0;
     display: flex;
     flex-direction: column;
-    position: fixed;
 }
 
-.header {
-    margin-left: 220px;
-    padding: 20px 30px;
-    width: calc(100% - 220px);
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.return-link {
+.logo-container {
     display: flex;
     align-items: center;
-    cursor: pointer;
+    padding: 0 22px;
+    margin-bottom: 50px;
 }
 
-.return-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
+.logo-icon {
+    width: 44px;
+    height: 63px;
 }
 
-.content {
-    margin-left: 220px;
-    padding: 30px;
-    width: calc(100% - 220px);
+.logo-text {
+    width: 117px;
+    height: 52px;
+    margin-left: 10px;
 }
 
 .nav-item {
@@ -62,29 +56,45 @@ body {
     background-color: rgba(213, 164, 115, 0.5);
 }
 
-.profile-dropdown {
-    display: none;
-    position: absolute;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    padding: 10px;
-    z-index: 1000;
-    top: 100%;
-    left: 0;
+.nav-icon {
+    width: 27px;
+    height: 27px;
+    margin-right: 10px;
 }
 
-.profile-btn:hover .profile-dropdown {
-    display: block;
+.nav-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000000;
 }
 
-.dropdown-item {
-    display: block;
-    padding: 5px 10px;
-    text-decoration: none;
-    color: #333;
+.user-profile {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    padding: 20px 27px;
 }
 
-.dropdown-item:hover {
-    background-color: #f0f0f0;
+.user-avatar {
+    width: 58px;
+    height: 57px;
+    border-radius: 28px;
+}
+
+.user-info {
+    margin-left: 10px;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: #000000;
+}
+
+.user-role {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: rgba(0, 0, 0, 0.5);
 }
