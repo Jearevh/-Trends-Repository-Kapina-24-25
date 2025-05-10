@@ -1,40 +1,179 @@
-{% extends 'admins/base.html' %}
 {% load static %}
-
-{% block title %}Inventory{% endblock %}
-
-{% block extra_css %}
-  <!-- this will now load inventory.css -->
-  <link rel="stylesheet" href="{% static 'admin_css/inventory.css' %}">
-
-  </style>
-  
-{% endblock %}
-
-
-{% block content %}
-  <div class="menu-management">
-    <h1>Manage Inventory</h1>
-    <div class="search-bar">
-      <span class="search-icon"><i class="las la-search"></i></span>
-      <input type="text" placeholder="Search products..." />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapina Inventory Management</title>
+    <link rel="stylesheet" href="{% static 'admin_css/inventory.css' %}">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="{% static 'images/img_kapina_icon_logo.png' %}" alt="Kapina Icon" class="logo-icon">
+            <img src="{% static 'images/img_kapina_logo.png' %}" alt="Kapina" class="logo-text">
+        </div>
+    
+        <a href="dashdash.html" class="nav-link">
+            <div class="nav-item">
+                <img src="{% static 'images/img_vector.svg' %}" alt="Orders Icon" class="nav-icon">
+                <span class="nav-text">Orders</span>
+            </div>
+        </a>
+    
+        <a href="Frame_313.html" class="nav-link">
+            <div class="nav-item active">
+                <img src="{% static 'images/img_materialsymbolsinventory.svg' %}" alt="Inventory Icon" class="nav-icon">
+                <span class="nav-text">Inventory</span>
+            </div>
+        </a>
+    
+        <a href="payments.html" class="nav-link">
+            <div class="nav-item">
+                <img src="{% static 'images/img_materialsymbolspayments.svg' %}" alt="Payments Icon" class="nav-icon">
+                <span class="nav-text">Payments</span>
+            </div>
+        </a>
+    
+        <a href="users.html" class="nav-link">
+            <div class="nav-item">
+                <img src="{% static 'images/img_mdiusers.svg' %}" alt="Users Icon" class="nav-icon">
+                <span class="nav-text">Users</span>
+            </div>
+        </a>
+    
+        <a href="messages.html" class="nav-link">
+            <div class="nav-item">
+                <img src="{% static 'images/img_tablermessages.svg' %}" alt="Messages Icon" class="nav-icon">
+                <span class="nav-text">Messages</span>
+            </div>
+        </a>
+    
+        <a href="team.html" class="nav-link">
+            <div class="nav-item">
+                <img src="{% static 'images/img_riteamfill.svg' %}" alt="Team Icon" class="nav-icon">
+                <span class="nav-text">Team</span>
+            </div>
+        </a>
+    
+        <div class="user-profile">
+            <img src="{% static 'images/img_ellipse_18.png' %}" alt="User Avatar" class="user-avatar">
+            <div class="user-info">
+                <div class="user-name">Lisa Manoban</div>
+                <div class="user-role">Staff</div>
+            </div>
+        </div>
     </div>
     
-    <div class="menu-grid">
-      <div class="menu-card">
-        <div class="menu-info">
-          <div class="menu-header">
-            <h3>Coffee Latte</h3>
-            <span class="price">₱120.00</span>
-          </div>
-          <p class="desc">Rich espresso with steamed milk</p>
-          <button>Edit</button>
+    
+    <div class="main-content">
+        <div class="header">
+            <div></div>
+            <div class="return-link">
+                <a href="{% url 'landing' %}" class="return-link">
+                    <img src="{% static 'images/img_letsiconsreturn.svg' %}" alt="Return Icon" class="return-icon">
+                    <span>Return to Customer View</span>
+                </a>
+            </div>
         </div>
-        <div class="menu-img"></div>
-      </div>
-      </div>
-      <!-- Add more cards here -->
+        
+        <h1 class="page-title">Manage Inventory</h1>
+        
+        <div class="search-bar">
+            <img src="{% static 'images/img_icbaselinesearch.svg' %}" alt="Search Icon" class="search-icon">
+            <input type="text" placeholder="Search products..." class="search-input">
+        </div>
+        
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">Spanish Latte</h2>
+                    <div class="product-price">₱ 49</div>
+                    <p class="product-description">--Bestseller-- Flavor profile: creamy, sweet, smooth, bold, indulgent</p>
+                </div>
+                <img src="{% static 'images/img_1x1.png' %}" alt="Spanish Latte" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">Caramel Macchiato</h2>
+                    <div class="product-price">₱ 49</div>
+                    <p class="product-description">--Recommended-- Flavor profile: caramel, strong, less sweet, familiar</p>
+                </div>
+                <img src="{% static 'images/img_1x1_1.png' %}" alt="Caramel Macchiato" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">Matcha Latte</h2>
+                    <div class="product-price">₱ 49</div>
+                    <p class="product-description">Matcha Latte - Non coffee</p>
+                </div>
+                <img src="{% static 'images/img_1x1_173x156.png' %}" alt="Matcha Latte" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">Vanilla Americano</h2>
+                    <div class="product-price">₱ 49</div>
+                    <p class="product-description">Flavor profile: dairy-free, strong, very strong. Your iced americano with a twist of vanilla.</p>
+                </div>
+                <img src="{% static 'images/img_1x1_2.png' %}" alt="Vanilla Americano" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+        </div>
     </div>
-    <button class="add-button">+ Add New Product</button>
-  </div>
-{% endblock %}
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Return to customer view functionality
+        document.querySelector('.return-link').addEventListener('click', function() {
+            // Removed alert
+        });
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(card => {
+                const productName = card.querySelector('.product-name').textContent.toLowerCase();
+                const productDesc = card.querySelector('.product-description').textContent.toLowerCase();
+                
+                if (productName.includes(searchTerm) || productDesc.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Quick view functionality
+        document.querySelectorAll('.quick-view-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const productName = this.closest('.product-card').querySelector('.product-name').textContent;
+                alert(`Quick view for ${productName}`);
+            });
+        });
+    </script>
+</body>
+</html>

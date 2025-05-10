@@ -34,8 +34,17 @@
             </button>
         </div>
 
-        <div class="profile-btn">
-            <i class="fas fa-user-circle"></i>
+        <a href="#" class="partner-link">Partner with Kapina</a>
+
+        <div class="profile-container">
+            <div class="profile-btn" onclick="toggleDropdown(event)">
+                <i class="fas fa-user-circle"></i>
+            </div>            
+            <div class="profile-dropdown" id="profileDropdown">
+
+                <a href="{% url 'inventory' %}" class="dropdown-item">Switch to Business Account</a>
+                <a href="#" class="dropdown-item">Sign Up</a>
+            </div>
         </div>
     </div>
 
@@ -52,5 +61,37 @@
             <a href="#" class="footer-links">Terms of Privacy</a>
         </div>
     </div>
+    <script>
+function toggleDropdown(event) {
+    event.stopPropagation(); // Prevent the click event from propagating to window.onclick
+    console.log('Profile button clicked');
+    const dropdown = document.getElementById('profileDropdown');
+
+    // Get the computed style to check visibility
+    const displayStyle = window.getComputedStyle(dropdown).display;
+    console.log('Current display: ', displayStyle);
+
+    if (displayStyle === 'block') {
+        dropdown.style.display = 'none';
+        console.log('Hiding dropdown');
+    } else {
+        dropdown.style.display = 'block';
+        console.log('Showing dropdown');
+    }
+}
+
+window.onclick = function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    if (!event.target.matches('.profile-btn') && !event.target.matches('.dropdown-item')) {
+        if (window.getComputedStyle(dropdown).display === 'block') {
+            dropdown.style.display = 'none';
+            console.log('Closing dropdown when clicked outside');
+        }
+    }
+}
+
+
+    </script>
+
 </body>
 </html>

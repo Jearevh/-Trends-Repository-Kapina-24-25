@@ -1,7 +1,10 @@
 from django.shortcuts import render
 
-def landing_page(request):
-    return render(request, 'user/landing.html')
+def index(request):
+    return render(request, 'admins/base.html')
 
-def admin_inventory_view(request):
+def inventory(request):
     return render(request, 'admins/inventory.html')
+
+def landing(request):
+    return render(request, 'user/landing.html')

@@ -157,26 +157,45 @@
         margin-left: 10px;
     }
 
-    /* Profile Button */
-    .profile-btn {
-        font-size: 26px;
-        color: white;
-        cursor: pointer;
-        margin-left: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.2s ease;
-        position: absolute;
-        top: 50%;  /* Vertically center */
-        right: 80px;  /* Positioned to the right */
-        transform: translateY(-50%);  /* Vertically center */
-        z-index: 2;  /* Ensure it's above other content */
-    }
+ /* Profile Button */
+.profile-btn {
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+    position: absolute;
+    top: 50%;  /* Vertically center */
+    right: 80px;  /* Positioned to the right */
+    transform: translateY(-50%);  /* Vertically center */
+    z-index: 2;  /* Ensure it's above other content */
+}
 
-    .profile-btn:hover {
-        transform: scale(1.1);
-    }
+
+/* Profile Dropdown */
+.profile-dropdown {
+    display: none; /* Ensure it's hidden by default */
+    position: absolute;
+    top: 70px;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1;
+    width: 200px;
+}
+
+.dropdown-item {
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+
 
     /* Show More Button */
     .show-more {
@@ -236,3 +255,16 @@
         text-overflow: ellipsis;
         flex: 1;
     }
+
+    .partner-link {
+        color: #FAF9F6;
+        font-size: 16px;
+        font-weight: 500;
+        margin-right: 40px;
+        position: absolute;
+        top: 50%;
+        right: 150px;
+        transform: translateY(-50%);
+        white-space: nowrap;
+    }
+

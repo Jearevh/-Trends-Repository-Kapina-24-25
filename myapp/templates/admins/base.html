@@ -1,47 +1,72 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Admin Panel{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'admin_css/base.css' %}">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
-
-  <!-- Add the extra_css block here -->
-  {% block extra_css %}{% endblock %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapina Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'admin_css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_css/inventory.css' %}">
 </head>
 <body>
-  <header class="admin-header">
-    <a href="{% url 'landing' %}" class="back-to-customer">← Return to Customer View</a>
-  </header>
-
-  <aside class="sidebar">
-    <a href="{% url 'landing' %}" class="logo">
-      <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo">
-    </a>
-    <nav>
-      <ul>
-        <li><a href="#"><i class="la la-tachometer-alt"></i> Dashboard</a></li>
-        <li><a href="#"><i class="la la-clipboard-list"></i> Orders</a></li>
-        <li><a href="#"><i class="la la-clipboard-check"></i> Inventory</a></li>
-        <li><a href="#"><i class="la la-wallet"></i> Payments</a></li>
-        <li><a href="#"><i class="la la-users"></i> Users</a></li>
-        <li><a href="#"><i class="la la-comment-dots"></i> Messages</a></li>
-        <li><a href="#"><i class="la la-user-friends"></i> Team</a></li>
-      </ul>
-    </nav>
-    <div class="admin-profile">
-      <div class="avatar"></div>
-      <div>
-        <p class="admin-name">Lisa Manoban</p>
-        <p class="admin-role">Staff</p>
-      </div>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="../assets/images/img_kapina_icon_logo.png" alt="Kapina Icon" class="logo-icon">
+            <img src="../assets/images/img_kapina_logo.png" alt="Kapina" class="logo-text">
+        </div>
+        <a href="dashdash.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_vector.svg" alt="Orders Icon" class="nav-icon">
+                <span class="nav-text">Orders</span>
+            </div>
+        </a>
+        <a href="inventory.html" class="nav-link">
+            <div class="nav-item active">
+                <img src="../assets/images/img_materialsymbolsinventory.svg" alt="Inventory Icon" class="nav-icon">
+                <span class="nav-text">Inventory</span>
+            </div>
+        </a>
+        <a href="payments.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_materialsymbolspayments.svg" alt="Payments Icon" class="nav-icon">
+                <span class="nav-text">Payments</span>
+            </div>
+        </a>
+        <a href="users.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_mdiusers.svg" alt="Users Icon" class="nav-icon">
+                <span class="nav-text">Users</span>
+            </div>
+        </a>
+        <a href="messages.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_tablermessages.svg" alt="Messages Icon" class="nav-icon">
+                <span class="nav-text">Messages</span>
+            </div>
+        </a>
+        <a href="team.html" class="nav-link">
+            <div class="nav-item">
+                <img src="../assets/images/img_riteamfill.svg" alt="Team Icon" class="nav-icon">
+                <span class="nav-text">Team</span>
+            </div>
+        </a>
+        <div class="user-profile">
+            <img src="../assets/images/img_ellipse_18.png" alt="User Avatar" class="user-avatar">
+            <div class="user-info">
+                <div class="user-name">Lisa Manoban</div>
+                <div class="user-role">Staff</div>
+            </div>
+        </div>
     </div>
-  </aside>
-
-  <main class="main-content">
-    {% block content %}{% endblock %}
-  </main>
+    <div class="header">
+        <div class="return-link">
+            <img src="../assets/images/img_letsiconsreturn.svg" alt="Return Icon" class="return-icon">
+            <span>Return to Customer View</span>
+        </div>
+    </div>
+    <div class="content">
+        {{ content }}
+    </div>
 </body>
 </html>
