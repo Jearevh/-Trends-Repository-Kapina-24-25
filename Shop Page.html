@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Joe Coffee Shop</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: #FAF9F6;
+        }
+
+        .container {
+            width: 1440px;
+            height: 1423px;
+            position: relative;
+            background: #FAF9F6;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .footer {
+            width: 1440px;
+            height: 101px;
+            position: absolute;
+            left: 1px;
+            top: 1323px;
+            background: #E2E1DE;
+        }
+
+        .footer-link {
+            position: absolute;
+            text-align: center;
+            color: black;
+            font-size: 14px;
+            font-weight: 400;
+            word-wrap: break-word;
+        }
+
+        .contact {
+            width: 62px;
+            left: 689px;
+            top: 42px;
+        }
+
+        .about {
+            width: 62px;
+            height: 17px;
+            left: 580px;
+            top: 42px;
+        }
+
+        .privacy {
+            width: 142px;
+            left: 777px;
+            top: 42px;
+        }
+
+        .cart {
+            width: 419.02px;
+            height: 510px;
+            position: absolute;
+            left: 953.99px;
+            top: 740px;
+        }
+
+        .cart-inner {
+            width: 419px;
+            height: 510px;
+            position: absolute;
+            background: rgba(217, 217, 217, 0);
+            border-radius: 10px;
+            border: 0.50px #A6A4A4 solid;
+        }
+
+        .cart-title {
+            width: 155px;
+            height: 31px;
+            position: absolute;
+            left: 25.01px;
+            top: 22px;
+            color: #222222;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .cart-item-name {
+            width: 155px;
+            height: 31px;
+            position: absolute;
+            left: 95.01px;
+            top: 85px;
+            color: #222222;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .cart-item-price {
+            width: 155px;
+            height: 31px;
+            position: absolute;
+            left: 95.01px;
+            top: 113px;
+            color: #222222;
+            font-size: 16px;
+            font-weight: 200;
+        }
+
+        .cart-item-img {
+            width: 58px;
+            height: 64px;
+            position: absolute;
+            left: 25.01px;
+            top: 81px;
+            border-radius: 14px;
+        }
+
+        .cart-divider {
+            width: 419.02px;
+            height: 0px;
+            position: absolute;
+            left: 0px;
+            top: 426.99px;
+            outline: 0.50px #C4C4C4 solid;
+            outline-offset: -0.25px;
+        }
+
+        .checkout-btn {
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            position: absolute;
+            left: 128.01px;
+            top: 443px;
+            background: rgba(111, 78, 55, 0.93);
+            border-radius: 8px;
+            justify-content: center;
+            align-items: center;
+            display: inline-flex;
+        }
+
+        .checkout-btn-text {
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .menu-item {
+            width: 400px;
+            height: 200px;
+            position: absolute;
+            background: rgba(238.96, 238.96, 238.96, 0);
+            border-radius: 12px;
+            border: 0.50px #A6A4A4 solid;
+        }
+
+        .menu-item-img {
+            width: 156px;
+            height: 173px;
+            position: absolute;
+            left: 230px;
+            top: 13px;
+            border-radius: 14px;
+        }
+
+        .menu-item-name {
+            width: 155px;
+            height: 31px;
+            position: absolute;
+            left: 11px;
+            top: 13px;
+            color: #222222;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .menu-item-price {
+            width: 155px;
+            height: 37px;
+            position: absolute;
+            left: 166px;
+            top: 10px;
+            color: #222222;
+            font-size: 20px;
+            font-weight: 200;
+        }
+
+        .menu-item-desc {
+            width: 177px;
+            height: 39px;
+            position: absolute;
+            left: 10px;
+            top: 65px;
+            color: black;
+            font-size: 14px;
+            font-weight: 100;
+        }
+
+        .order-btn {
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            position: absolute;
+            left: 99px;
+            top: 129px;
+            background: rgba(111, 78, 55, 0.93);
+            border-radius: 8px;
+            justify-content: center;
+            align-items: center;
+            display: inline-flex;
+        }
+
+        .order-btn-text {
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .shop-header {
+            width: 1299px;
+            height: 524px;
+            position: absolute;
+            left: 74px;
+            top: 138px;
+            overflow: hidden;
+        }
+
+        .shop-name {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            color: #222222;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .shop-address {
+            position: absolute;
+            left: 1px;
+            top: 453px;
+            color: #222222;
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .shop-hours {
+            position: absolute;
+            left: 1018px;
+            top: 446px;
+            text-align: right;
+            color: #222222;
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .shop-tags {
+            position: absolute;
+            left: 0px;
+            top: 500px;
+            color: #222222;
+            font-size: 20px;
+            font-weight: 200;
+        }
+
+        .shop-status {
+            position: absolute;
+            left: 1184px;
+            top: 488px;
+            color: #222222;
+            font-size: 20px;
+            font-weight: 200;
+        }
+
+        .favorite {
+            position: absolute;
+            left: 1198px;
+            top: 11px;
+        }
+
+        .favorite-text {
+            color: #222222;
+            font-size: 20px;
+            font-weight: 200;
+            text-decoration: underline;
+        }
+
+        .shop-main-img {
+            width: 648px;
+            height: 365px;
+            position: absolute;
+            left: 1px;
+            top: 50px;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .shop-sub-img {
+            width: 307px;
+            height: 175px;
+            position: absolute;
+        }
+
+        .sub-img-1 {
+            left: 666px;
+            top: 50px;
+        }
+
+        .sub-img-2 {
+            left: 666px;
+            top: 240px;
+        }
+
+        .sub-img-3 {
+            left: 991px;
+            top: 50px;
+            border-top-right-radius: 12px;
+        }
+
+        .sub-img-4 {
+            left: 991px;
+            top: 240px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .menu-title {
+            position: absolute;
+            left: 75px;
+            top: 683px;
+            color: #222222;
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .search-bar {
+            width: 481px;
+            height: 64px;
+            position: absolute;
+            left: 479px;
+            top: 20px;
+            background: white;
+            border-radius: 500px;
+            outline: 1px #D3D3D3 solid;
+        }
+
+        .search-where {
+            width: 209px;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 14px;
+            padding-bottom: 14px;
+            position: absolute;
+            left: 6px;
+            top: 0px;
+            background: white;
+            border-top-left-radius: 500px;
+            border-bottom-left-radius: 500px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 4px;
+            display: inline-flex;
+        }
+
+        .search-where-label {
+            color: #222222;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .search-where-placeholder {
+            color: #717171;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .search-divider {
+            width: 25px;
+            height: 0px;
+            position: absolute;
+            left: 216px;
+            top: 19.50px;
+            transform: rotate(90deg);
+            transform-origin: top left;
+            outline: 1px #D3D3D3 solid;
+            outline-offset: -0.50px;
+        }
+
+        .search-drink {
+            width: 209px;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 14px;
+            padding-bottom: 14px;
+            position: absolute;
+            left: 217.50px;
+            top: 0px;
+            background: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 4px;
+            display: inline-flex;
+        }
+
+        .search-icon {
+            width: 48px;
+            height: 48px;
+            position: absolute;
+            left: 427px;
+            top: 8px;
+            background: rgba(111, 78, 55, 0.93);
+            border-radius: 9999px;
+        }
+
+        .nav-bar {
+            width: 1440px;
+            height: 81px;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            background: rgba(250, 249, 246, 0);
+        }
+
+        .partner-section {
+            width: 249px;
+            height: 38px;
+            position: absolute;
+            left: 1111px;
+            top: 21px;
+        }
+
+        .partner-text {
+            position: absolute;
+            left: 25px;
+            top: 11px;
+            color: #222222;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .menu-button {
+            width: 81px;
+            height: 38px;
+            position: absolute;
+            left: 168px;
+            top: 0px;
+        }
+
+        .menu-button-bg {
+            width: 81px;
+            height: 38px;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            background: #FAF9F6;
+            border-radius: 29px;
+            outline: 1px #EBEBEB solid;
+            outline-offset: -0.50px;
+        }
+
+        .menu-dots {
+            position: absolute;
+            left: 12px;
+            top: 15px;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 4px;
+            display: inline-flex;
+        }
+
+        .menu-dot {
+            width: 14px;
+            height: 0px;
+            outline: 1.50px #222222 solid;
+            outline-offset: -0.75px;
+        }
+
+        .logo {
+            width: 133.35px;
+            height: 52px;
+            position: absolute;
+            left: 74px;
+            top: 9px;
+        }
+
+        .logo-text {
+            width: 95.35px;
+            height: 43px;
+            position: absolute;
+            left: 38px;
+            top: 5px;
+        }
+
+        .logo-icon {
+            width: 36.17px;
+            height: 52px;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+
+        .quantity-selector {
+            width: 109px;
+            height: 32px;
+            position: absolute;
+            left: 1252px;
+            top: 853px;
+            background: rgba(217, 217, 217, 0);
+            border-radius: 50px;
+            border: 0.50px #A6A4A4 solid;
+        }
+
+        .quantity {
+            position: absolute;
+            left: 1303px;
+            top: 859px;
+            color: black;
+            font-size: 16px;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="footer">
+            <div class="footer-link about">About Us</div>
+            <div class="footer-link contact">Contact</div>
+            <div class="footer-link privacy">Terms of Privacy</div>
+        </div>
+
+        <div class="cart">
+            <div class="cart-inner"></div>
+            <div class="cart-title">Your items</div>
+            <div class="cart-item-name">Spanish Latte</div>
+            <div class="cart-item-price">₱ 49</div>
+            <img class="cart-item-img" src="https://placehold.co/58x64" alt="Spanish Latte" />
+            <div class="cart-divider"></div>
+            <div class="checkout-btn">
+                <div class="checkout-btn-text">Finalize Pre-Order</div>
+            </div>
+        </div>
+
+        <div class="menu-item" style="left: 68px; top: 740px;">
+            <img class="menu-item-img" src="https://placehold.co/156x173" alt="Spanish Latte" />
+            <div class="menu-item-name">Spanish Latte</div>
+            <div class="menu-item-price">₱ 49</div>
+            <div class="menu-item-desc">--Bestseller-- Flavor profile: creamy, sweet, smooth, bold, indulgent</div>
+            <div class="order-btn">
+                <div class="order-btn-text">Pre-order</div>
+            </div>
+        </div>
+
+        <div class="menu-item" style="left: 477px; top: 740px;">
+            <img class="menu-item-img" src="https://placehold.co/156x173" alt="Caramel Macchiato" />
+            <div class="menu-item-name">Caramel Macchiato</div>
+            <div class="menu-item-price">₱ 49</div>
+            <div class="menu-item-desc">--Recommended-- Flavor profile: caramel, strong, less sweet, familiar</div>
+            <div class="order-btn">
+                <div class="order-btn-text">Pre-order</div>
+            </div>
+        </div>
+
+        <div class="menu-item" style="left: 68px; top: 950px;">
+            <img class="menu-item-img" src="https://placehold.co/156x173" alt="Matcha Latte" />
+            <div class="menu-item-name">Matcha Latte</div>
+            <div class="menu-item-price">₱ 49</div>
+            <div class="menu-item-desc">Matcha Latte - Non coffee</div>
+            <div class="order-btn">
+                <div class="order-btn-text">Pre-order</div>
+            </div>
+        </div>
+
+        <div class="menu-item" style="left: 477px; top: 950px;">
+            <img class="menu-item-img" src="https://placehold.co/156x173" alt="Vanilla Americano" />
+            <div class="menu-item-name">Vanilla Americano</div>
+            <div class="menu-item-price">₱ 49</div>
+            <div class="menu-item-desc">Flavor profile: dairy-free, strong, very strong. Your iced americano with a twist of vanilla.</div>
+            <div class="order-btn">
+                <div class="order-btn-text">Pre-order</div>
+            </div>
+        </div>
+
+        <div class="shop-header">
+            <div class="shop-name">Daily Joe</div>
+            <div class="shop-address">Ateneo Ave, Naga, Camarines Sur</div>
+            <div class="shop-hours">8:00 AM - 11:00 PM</div>
+            <div class="shop-tags">Pure Beans • Iced Lattes • To-Go Coffee</div>
+            <div class="shop-status">OPEN DAILY</div>
+            <div class="favorite">
+                <span style="color: #222222; font-size: 20px; font-weight: 200;">♡ </span>
+                <span class="favorite-text">Favorite</span>
+            </div>
+            <img class="shop-main-img" src="https://placehold.co/648x365" alt="Daily Joe main" />
+            <img class="shop-sub-img sub-img-1" src="https://placehold.co/307x175" alt="Daily Joe 1" />
+            <img class="shop-sub-img sub-img-2" src="https://placehold.co/307x175" alt="Daily Joe 2" />
+            <img class="shop-sub-img sub-img-3" src="https://placehold.co/307x175" alt="Daily Joe 3" />
+            <img class="shop-sub-img sub-img-4" src="https://placehold.co/307x175" alt="Daily Joe 4" />
+        </div>
+
+        <div class="menu-title">Menu</div>
+
+        <div class="nav-bar">
+            <div class="partner-section">
+                <div class="partner-text">Partner with Kapina</div>
+                <div class="menu-button">
+                    <div class="menu-button-bg"></div>
+                    <div class="menu-dots">
+                        <div class="menu-dot"></div>
+                        <div class="menu-dot"></div>
+                        <div class="menu-dot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo">
+                <img class="logo-text" src="https://placehold.co/95x43" alt="Kapina" />
+                <img class="logo-icon" src="https://placehold.co/36x52" alt="Logo" />
+            </div>
+        </div>
+
+        <div class="quantity-selector"></div>
+        <div class="quantity">1</div>
+    </div>
+</body>
+</html>
