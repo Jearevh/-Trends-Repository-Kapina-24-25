@@ -14,9 +14,8 @@ def index(request):
     return render(request, 'admins/base.html')
 
 def inventory(request):
-    # Check if user has a business profile
     if not hasattr(request.user, 'businessprofile'):
-        messages.error(request, 'You need to create a business profile first.')
+        messages.warning(request, 'Please create a business profile first.')
         return redirect('create_business_profile')
         
     # Get products for the user's business only
@@ -28,6 +27,10 @@ def landing(request):
     return render(request, 'user/landing.html', {'shops': shops})
     
 def add_product(request):
+    if not hasattr(request.user, 'businessprofile'):
+        messages.warning(request, 'Please create a business profile first.')
+        return redirect('create_business_profile')
+
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
@@ -41,8 +44,15 @@ def add_product(request):
     return render(request, 'admins/addproduct.html', {'form': form})
 
 def shop_page(request):
-    shops = BusinessProfile.objects.all()
-    return render(request, 'admins/shop_page.html', {'shops': shops})
+    if not hasattr(request.user, 'businessprofile'):
+        messages.warning(request, 'Please create a business profile first.')
+        return redirect('create_business_profile')
+    
+    # Get only the current user's business profile
+    shop = request.user.businessprofile
+    # Get products for the current shop only
+    products = Product.objects.filter(business=shop)
+    return render(request, 'admins/shop_page.html', {'shop': shop, 'products': products})
 
 def users(request):
     users = User.objects.all()
@@ -58,15 +68,13 @@ def shop_detail_view(request, shop_id):
         current_time = datetime.now().time()
         shop_status = "OPEN"  # You can add logic to determine if shop is open based on hours
         
-        context = {
+        return render(request, 'user/shop.html', {
             'shop': shop,
             'products': products,
-            'shop_status': shop_status,
-            'current_time': current_time,
-        }
-        return render(request, 'user/shop.html', context)
-    except Exception as e:
-        messages.error(request, f'Error loading shop details: {str(e)}')
+            'shop_status': shop_status
+        })
+    except BusinessProfile.DoesNotExist:
+        messages.error(request, 'Shop not found.')
         return redirect('landing')
 
 def register(request):
