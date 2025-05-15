@@ -7,6 +7,7 @@
     <title>{% block title %}Kapina Inventory Management{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'admin_css/base.css' %}">
     <link rel="stylesheet" href="{% static 'admin_css/inventory.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_css/shop_page.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -17,21 +18,21 @@
         </div>
 
         <a href="{% url 'shop_page' %}" class="nav-link">
-            <div class="nav-item">
+            <div class="nav-item {% if request.resolver_match.url_name == 'shop_page' %}active{% endif %}">
                 <img src="{% static 'images/img_vector.svg' %}" alt="Shop Icon" class="nav-icon">
                 <span class="nav-text">Shop Page</span>
             </div>
         </a>
 
         <a href="{% url 'inventory' %}" class="nav-link">
-            <div class="nav-item active">
+            <div class="nav-item {% if request.resolver_match.url_name == 'inventory' %}active{% endif %}">
                 <img src="{% static 'images/img_materialsymbolsinventory.svg' %}" alt="Inventory Icon" class="nav-icon">
                 <span class="nav-text">Inventory</span>
             </div>
         </a>
 
         <a href="{% url 'users' %}" class="nav-link">
-            <div class="nav-item">
+            <div class="nav-item {% if request.resolver_match.url_name == 'users' %}active{% endif %}">
                 <img src="{% static 'images/img_mdiusers.svg' %}" alt="Users Icon" class="nav-icon">
                 <span class="nav-text">Users</span>
             </div>

@@ -15,58 +15,26 @@
         <h1 class="page-title">Manage Inventory</h1>
         
         <div class="search-bar">
-            <img src="{% static 'images/img_icbaselinesearch.svg' %}" alt="Search Icon" class="search-icon">
+            <img src="{% static 'assets/images/img_icbaselinesearch.svg' %}" alt="Search Icon" class="search-icon">
             <input type="text" placeholder="Search products..." class="search-input">
         </div>
         
         <div class="products-grid">
+            {% for product in products %}
             <div class="product-card">
                 <div class="product-info">
-                    <h2 class="product-name">Spanish Latte</h2>
-                    <div class="product-price">₱ 49</div>
-                    <p class="product-description">--Bestseller-- Flavor profile: creamy, sweet, smooth, bold, indulgent</p>
+                    <h2 class="product-name">{{ product.name }}</h2>
+                    <div class="product-price">₱ {{ product.price }}</div>
+                    <p class="product-description">{{ product.description|default:"No description available" }}</p>
                 </div>
-                <img src="{% static 'images/img_1x1.png' %}" alt="Spanish Latte" class="product-image">
+                <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/img_1x1_2.png' %}{% endif %}" alt="{{ product.name }}" class="product-image">
                 <div class="quick-view-btn">
                     <span class="quick-view-text">Quick view</span>
                 </div>
             </div>
-            
-            <div class="product-card">
-                <div class="product-info">
-                    <h2 class="product-name">Caramel Macchiato</h2>
-                    <div class="product-price">₱ 49</div>
-                    <p class="product-description">--Recommended-- Flavor profile: caramel, strong, less sweet, familiar</p>
-                </div>
-                <img src="{% static 'images/img_1x1_1.png' %}" alt="Caramel Macchiato" class="product-image">
-                <div class="quick-view-btn">
-                    <span class="quick-view-text">Quick view</span>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-info">
-                    <h2 class="product-name">Matcha Latte</h2>
-                    <div class="product-price">₱ 49</div>
-                    <p class="product-description">Matcha Latte - Non coffee</p>
-                </div>
-                <img src="{% static 'images/img_1x1_173x156.png' %}" alt="Matcha Latte" class="product-image">
-                <div class="quick-view-btn">
-                    <span class="quick-view-text">Quick view</span>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-info">
-                    <h2 class="product-name">Vanilla Americano</h2>
-                    <div class="product-price">₱ 49</div>
-                    <p class="product-description">Flavor profile: dairy-free, strong, very strong. Your iced americano with a twist of vanilla.</p>
-                </div>
-                <img src="{% static 'images/img_1x1_2.png' %}" alt="Vanilla Americano" class="product-image">
-                <div class="quick-view-btn">
-                    <span class="quick-view-text">Quick view</span>
-                </div>
-            </div>
+            {% empty %}
+                <p>No products available.</p>
+            {% endfor %}
 
             <a href="{% url 'addproduct' %}" class="product-card add-new-product">
                 <div class="product-info">

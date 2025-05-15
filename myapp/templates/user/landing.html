@@ -1,43 +1,34 @@
 {% extends 'user/base.html' %}
+{% load static %}
 
 {% block title %}Landing Page{% endblock %}
 
 {% block content %}
-
-<div class="cards-container" id="cards-container"></div>
+<div class="cards-container">
+    {% for shop in shops %}
+    <a href="{% url 'shop_detail' shop.id %}" class="card-link">
+        <div class="card">
+            {% if shop.logo %}
+                <img src="{{ shop.logo.url }}" alt="{{ shop.business_name }}">
+            {% else %}
+                <img src="https://placehold.co/328x213" alt="{{ shop.business_name }}">
+            {% endif %}
+            <div class="card-header">
+                <div class="card-title">{{ shop.business_name }}</div>
+                <div class="card-location-hours">
+                    <div class="card-address">{{ shop.address }}</div>
+                    <div class="separator"></div>
+                    <div class="card-hours">{{ shop.hours|default:"Hours not specified" }}</div>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% empty %}
+    <p class="no-shops">No coffee shops available at the moment.</p>
+    {% endfor %}
+</div>
 
 <div class="show-more">
     <div class="show-more-text">Show more</div>
 </div>
-
-<script>
-    const coffeeShops = [
-        { title: "Kapehan Nindo", address: "Ateneo Avenue", hours: "8AM-11PM" },
-        { title: "Cafe Aroma", address: "Katipunan Street", hours: "9AM-10PM" },
-        { title: "Bean Haven", address: "Pioneer Road", hours: "7AM-9PM" },
-        { title: "Brews Brothers", address: "Downtown", hours: "6AM-6PM" },
-        { title: "Sip Station", address: "Main Avenue", hours: "10AM-10PM" },
-        { title: "Cafe Sol", address: "Sunrise Blvd", hours: "8AM-8PM" },
-        { title: "Grounded Beans", address: "Baywalk", hours: "11AM-11PM" },
-    ];
-
-    const cardsContainer = document.getElementById('cards-container');
-
-    coffeeShops.forEach(shop => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <img src="https://placehold.co/328x213" alt="Coffee Shop">
-            <div class="card-header">
-                <div class="card-title">${shop.title}</div>
-                <div class="card-location-hours">
-                    <div class="card-address">${shop.address}</div>
-                    <div class="separator"></div>
-                    <div class="card-hours">${shop.hours}</div>
-                </div>
-            </div>
-        `;
-        cardsContainer.appendChild(card);
-    });
-</script>
 {% endblock %}

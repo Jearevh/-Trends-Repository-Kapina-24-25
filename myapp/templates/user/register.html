@@ -1,0 +1,44 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block title %}Register - Kapina{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-box">
+        <h1>Create Your Account</h1>
+        <form method="post" class="register-form">
+            {% csrf_token %}
+            {% if messages %}
+            <div class="error-message">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" id="id_username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="id_password1">Password</label>
+                <input type="password" name="password1" id="id_password1" class="form-control" required>
+                <small class="form-text text-muted">
+                    Your password must contain at least 8 characters and can't be entirely numeric.
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="id_password2">Confirm Password</label>
+                <input type="password" name="password2" id="id_password2" class="form-control" required>
+                <small class="form-text text-muted">
+                    Enter the same password as before, for verification.
+                </small>
+            </div>
+            <button type="submit" class="register-btn">Sign Up</button>
+        </form>
+        <div class="register-footer">
+            <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

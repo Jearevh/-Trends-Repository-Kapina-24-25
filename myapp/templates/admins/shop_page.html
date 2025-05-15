@@ -4,8 +4,100 @@
 {% block title %}Shop Page{% endblock %}
 
 {% block content %}
-<div class="main-content">
-    <h1 class="page-title">Shop Page</h1>
-    <!-- Add your shop page content here -->
+<div class="shop-container">
+    <div class="shop-header">
+        <h1>Shop Management</h1>
+        <div class="shop-actions">
+            <a href="{% url 'inventory' %}" class="action-btn">
+                <i class="fas fa-box"></i> Manage Inventory
+            </a>
+            <a href="{% url 'addproduct' %}" class="action-btn">
+                <i class="fas fa-plus"></i> Add Product
+            </a>
+        </div>
+    </div>
+
+    <div class="shop-stats">
+        <div class="stat-card">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="stat-info">
+                <h3>Total Orders</h3>
+                <p>0</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-box"></i>
+            <div class="stat-info">
+                <h3>Total Products</h3>
+                <p>0</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <div class="stat-info">
+                <h3>Total Customers</h3>
+                <p>0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-orders">
+        <h2>Recent Orders</h2>
+        <div class="orders-list">
+            <p class="no-orders">No orders yet</p>
+        </div>
+    </div>
+
+    <div class="popular-products">
+        <h2>Popular Products</h2>
+        <div class="products-grid">
+            <p class="no-products">No products available</p>
+        </div>
+    </div>
+
+    <div class="shop-box">
+        <h1>Partner with Kapina</h1>
+        <p class="shop-description">Join our network of coffee shops and expand your business reach.</p>
+        
+        <form method="post" class="shop-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="error-message" style="color: #dc3545; font-weight: bold; margin-bottom: 15px;">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        {{ error }}<br>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="id_business_name">Business Name</label>
+                {{ form.business_name }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_description">Business Description</label>
+                {{ form.description }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_address">Business Address</label>
+                {{ form.address }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_contact_number">Contact Number</label>
+                {{ form.contact_number }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_logo">Business Logo</label>
+                {{ form.logo }}
+            </div>
+            
+            <button type="submit" class="shop-btn">Create Business Profile</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

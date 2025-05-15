@@ -125,3 +125,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Authentication settings
+LOGIN_REDIRECT_URL = 'landing'  # Redirect to landing page after login
+LOGIN_URL = 'login'  # URL to redirect to if login is required
+LOGOUT_REDIRECT_URL = 'landing'  # Redirect to landing page after logout
+
