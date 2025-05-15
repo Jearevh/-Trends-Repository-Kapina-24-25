@@ -1,103 +1,52 @@
-{% extends 'admins/base.html' %}
-{% load static %}
-
-{% block title %}Shop Page{% endblock %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="shop-container">
-    <div class="shop-header">
-        <h1>Shop Management</h1>
-        <div class="shop-actions">
-            <a href="{% url 'inventory' %}" class="action-btn">
-                <i class="fas fa-box"></i> Manage Inventory
-            </a>
-            <a href="{% url 'addproduct' %}" class="action-btn">
-                <i class="fas fa-plus"></i> Add Product
-            </a>
+<div class="manage-users-container">
+    <h1 class="manage-users-title">Manage Users</h1>
+    
+    <div class="user-card">
+        <div class="user-header">
+            <div class="user-info">
+                <div class="user-avatar"></div>
+                <div>
+                    <div class="user-name">Jeremy Clarence M. Macatangay</div>
+                    <div class="user-email">jcmacatangay@gmail.com</div>
+                </div>
+            </div>
+            <button class="edit-profile-btn">
+                <img src="{% static 'images/edit_icon.svg' %}" alt="Edit Icon" class="edit-icon">
+                Edit Profile
+            </button>
+        </div>
+        <div class="user-details">
+            <div class="user-detail">
+                <span class="detail-label">First Name</span>
+                <span class="detail-value">Jeremy Clarence</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Middle Initial</span>
+                <span class="detail-value">M.</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Last Name</span>
+                <span class="detail-value">Macatangay</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value">Jeremy Clarence</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Member Since</span>
+                <span class="detail-value">March 5, 2025</span>
+            </div>
         </div>
     </div>
 
-    <div class="shop-stats">
-        <div class="stat-card">
-            <i class="fas fa-shopping-cart"></i>
-            <div class="stat-info">
-                <h3>Total Orders</h3>
-                <p>0</p>
-            </div>
-        </div>
-        <div class="stat-card">
-            <i class="fas fa-box"></i>
-            <div class="stat-info">
-                <h3>Total Products</h3>
-                <p>0</p>
-            </div>
-        </div>
-        <div class="stat-card">
-            <i class="fas fa-users"></i>
-            <div class="stat-info">
-                <h3>Total Customers</h3>
-                <p>0</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="recent-orders">
-        <h2>Recent Orders</h2>
-        <div class="orders-list">
-            <p class="no-orders">No orders yet</p>
-        </div>
-    </div>
-
-    <div class="popular-products">
-        <h2>Popular Products</h2>
-        <div class="products-grid">
-            <p class="no-products">No products available</p>
-        </div>
-    </div>
-
-    <div class="shop-box">
-        <h1>Partner with Kapina</h1>
-        <p class="shop-description">Join our network of coffee shops and expand your business reach.</p>
-        
-        <form method="post" class="shop-form" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% if form.errors %}
-            <div class="error-message" style="color: #dc3545; font-weight: bold; margin-bottom: 15px;">
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        {{ error }}<br>
-                    {% endfor %}
-                {% endfor %}
-            </div>
-            {% endif %}
-            
-            <div class="form-group">
-                <label for="id_business_name">Business Name</label>
-                {{ form.business_name }}
-            </div>
-            
-            <div class="form-group">
-                <label for="id_description">Business Description</label>
-                {{ form.description }}
-            </div>
-            
-            <div class="form-group">
-                <label for="id_address">Business Address</label>
-                {{ form.address }}
-            </div>
-            
-            <div class="form-group">
-                <label for="id_contact_number">Contact Number</label>
-                {{ form.contact_number }}
-            </div>
-            
-            <div class="form-group">
-                <label for="id_logo">Business Logo</label>
-                {{ form.logo }}
-            </div>
-            
-            <button type="submit" class="shop-btn">Create Business Profile</button>
-        </form>
+    <div class="quick-actions-card">
+        <h2 class="quick-actions-title">Quick Actions</h2>
+        <button class="quick-action-btn reset-password">Reset Password</button>
+        <button class="quick-action-btn deactivate-account">Deactivate Account</button>
+        <button class="quick-action-btn delete-account">Delete Account</button>
     </div>
 </div>
 {% endblock %}

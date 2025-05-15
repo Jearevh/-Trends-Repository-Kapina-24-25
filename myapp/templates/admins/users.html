@@ -3,67 +3,58 @@
 
 {% block title %}User Management{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'admin_css/users.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="users-container">
-    <div class="users-header">
-        <h1>User Management</h1>
-        <div class="search-bar">
-            <input type="text" placeholder="Search users...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
-    </div>
-
-    <div class="users-filters">
-        <select class="filter-select">
-            <option value="all">All Users</option>
-            <option value="customers">Customers</option>
-            <option value="business">Business Accounts</option>
-        </select>
-        <select class="sort-select">
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="name">Name (A-Z)</option>
-        </select>
-    </div>
-
-    <div class="users-list">
-        <div class="user-card">
+<div class="manage-users-container">
+    <h1 class="manage-users-title">Manage Users</h1>
+    
+    <div class="user-card">
+        <div class="user-header">
             <div class="user-info">
-                <img src="{% static 'images/default-avatar.png' %}" alt="User Avatar" class="user-avatar">
-                <div class="user-details">
-                    <h3>John Doe</h3>
-                    <p>john.doe@example.com</p>
-                    <span class="user-type customer">Customer</span>
+                <div class="user-avatar"></div>
+                <div>
+                    <div class="user-name">Jeremy Clarence M. Macatangay</div>
+                    <div class="user-email">jcmacatangay@gmail.com</div>
                 </div>
             </div>
-            <div class="user-actions">
-                <button class="action-btn view"><i class="fas fa-eye"></i></button>
-                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                <button class="action-btn delete"><i class="fas fa-trash"></i></button>
-            </div>
+            <button class="edit-profile-btn">
+                <span>Edit Profile</span>
+                <img src="{% static 'images/img_materialssymbolsedit.svg' %}" alt="Edit" class="edit-icon">
+            </button>
         </div>
 
-        <div class="user-card">
-            <div class="user-info">
-                <img src="{% static 'images/default-avatar.png' %}" alt="User Avatar" class="user-avatar">
-                <div class="user-details">
-                    <h3>Jane Smith</h3>
-                    <p>jane.smith@example.com</p>
-                    <span class="user-type business">Business</span>
-                </div>
+        <div class="user-details">
+            <div class="user-detail">
+                <span class="detail-label">First Name</span>
+                <span class="detail-value">Jeremy Clarence</span>
             </div>
-            <div class="user-actions">
-                <button class="action-btn view"><i class="fas fa-eye"></i></button>
-                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+            <div class="user-detail">
+                <span class="detail-label">Middle Initial</span>
+                <span class="detail-value">M.</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Last Name</span>
+                <span class="detail-value">Macatangay</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value">Jeremy Clarence</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Member Since</span>
+                <span class="detail-value">March 5, 2025</span>
             </div>
         </div>
     </div>
 
-    <div class="pagination">
-        <button class="pagination-btn" disabled><i class="fas fa-chevron-left"></i></button>
-        <span class="page-number">Page 1 of 1</span>
-        <button class="pagination-btn" disabled><i class="fas fa-chevron-right"></i></button>
+    <div class="quick-actions-card">
+        <h2 class="quick-actions-title">Quick Actions</h2>
+        <button class="quick-action-btn reset-password">Reset Password</button>
+        <button class="quick-action-btn deactivate-account">Deactivate Account</button>
+        <button class="quick-action-btn delete-account">Delete Account</button>
     </div>
 </div>
 {% endblock %}
