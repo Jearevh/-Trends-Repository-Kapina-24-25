@@ -1,5 +1,7 @@
 Django>=4.2
 psycopg2-binary>=2.9
+dj-database-url>=2.1.0
+python-dotenv>=1.0.0
 
 # Common utilities
 requests>=2.31
