@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Kapina Inventory Management{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'admin_css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'admin_css/inventory.css' %}">
-    <link rel="stylesheet" href="{% static 'admin_css/shop_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="/static/admin_css/base.css?v=5">
+    <link rel="stylesheet" type="text/css" href="/static/admin_css/inventory.css?v=5">
+    <link rel="stylesheet" type="text/css" href="/static/admin_css/shop_page.css?v=5">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -46,6 +46,8 @@
             </div>
         </div>
     </div>
-    {% block content %}{% endblock %}
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>

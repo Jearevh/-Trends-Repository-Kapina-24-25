@@ -56,7 +56,12 @@
                 </div>
             </div>
             {% empty %}
-            <div class="no-products">No products available at the moment.</div>
+            <div class="no-products">
+                <p>This shop hasn't added any menu items yet.</p>
+                {% if user.is_authenticated and user.businessprofile == shop %}
+                <a href="{% url 'inventory' %}" class="add-menu-btn">Add Menu Items</a>
+                {% endif %}
+            </div>
             {% endfor %}
         </div>
     </div>

@@ -229,8 +229,29 @@ body {
 
 .no-products {
     text-align: center;
-    color: #5E5E5E;
+    padding: 40px;
+    background-color: #f8f8f8;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.no-products p {
+    color: #666;
     font-size: 16px;
-    padding: 20px;
-    grid-column: 1 / -1;
+    margin-bottom: 20px;
+}
+
+.add-menu-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: rgba(111, 78, 55, 0.93);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.add-menu-btn:hover {
+    background-color: rgba(111, 78, 55, 1);
 }

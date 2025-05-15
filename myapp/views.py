@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, authenticate
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 from .forms import UserRegistrationForm, BusinessProfileForm, ProductForm
 from .models import BusinessProfile, Product, Order
 from datetime import datetime
@@ -11,7 +14,13 @@ def index(request):
     return render(request, 'admins/base.html')
 
 def inventory(request):
-    products = Product.objects.all()
+    # Check if user has a business profile
+    if not hasattr(request.user, 'businessprofile'):
+        messages.error(request, 'You need to create a business profile first.')
+        return redirect('create_business_profile')
+        
+    # Get products for the user's business only
+    products = Product.objects.filter(business=request.user.businessprofile)
     return render(request, 'admins/inventory.html', {'products': products})
 
 def landing(request):
@@ -42,6 +51,7 @@ def users(request):
 def shop_detail_view(request, shop_id):
     try:
         shop = get_object_or_404(BusinessProfile, id=shop_id)
+        # Only get products that belong to this specific shop
         products = Product.objects.filter(business=shop)
         
         # Get shop status (you can add this logic based on business hours)
@@ -125,3 +135,42 @@ def custom_login(request):
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'user/login.html')
+
+def is_superuser(user):
+    return user.is_superuser
+
+@login_required
+@ensure_csrf_cookie
+def update_product(request, product_id):
+    # Get the product and check if it belongs to the user's business
+    product = get_object_or_404(Product, id=product_id)
+    
+    # Check if user has a business profile and if the product belongs to their business
+    if not hasattr(request.user, 'businessprofile') or product.business != request.user.businessprofile:
+        return JsonResponse({'error': 'You do not have permission to update this product'}, status=403)
+    
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return JsonResponse({'error': form.errors}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@login_required
+@ensure_csrf_cookie
+@require_POST
+def delete_product(request, product_id):
+    try:
+        # Get the product and check if it belongs to the user's business
+        product = get_object_or_404(Product, id=product_id)
+        
+        # Check if user has a business profile and if the product belongs to their business
+        if not hasattr(request.user, 'businessprofile') or product.business != request.user.businessprofile:
+            return JsonResponse({'error': 'You do not have permission to delete this product'}, status=403)
+            
+        product.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

@@ -1,51 +1,207 @@
 {% extends 'admins/base.html' %}
 {% load static %} 
 {% block content %}
-    <div class="main-content">
-        <div class="header">
-            <div></div>
-            <div class="return-link">
-                <a href="{% url 'landing' %}" class="return-link">
-                    <img src="{% static 'images/img_letsiconsreturn.svg' %}" alt="Return Icon" class="return-icon">
-                    <span>Return to Customer View</span>
-                </a>
-            </div>
-        </div>
-        
-        <h1 class="page-title">Manage Inventory</h1>
-        
-        <div class="search-bar">
-            <img src="{% static 'assets/images/img_icbaselinesearch.svg' %}" alt="Search Icon" class="search-icon">
-            <input type="text" placeholder="Search products..." class="search-input">
-        </div>
-        
-        <div class="products-grid">
-            {% for product in products %}
-            <div class="product-card">
-                <div class="product-info">
-                    <h2 class="product-name">{{ product.name }}</h2>
-                    <div class="product-price">₱ {{ product.price }}</div>
-                    <p class="product-description">{{ product.description|default:"No description available" }}</p>
-                </div>
-                <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/img_1x1_2.png' %}{% endif %}" alt="{{ product.name }}" class="product-image">
-                <div class="quick-view-btn">
-                    <span class="quick-view-text">Quick view</span>
-                </div>
-            </div>
-            {% empty %}
-                <p>No products available.</p>
-            {% endfor %}
-
-            <a href="{% url 'addproduct' %}" class="product-card add-new-product">
-                <div class="product-info">
-                    <h2 class="product-name">+ Add New Product</h2>
-                    <div class="product-price"></div>
-                    <p class="product-description">Click here to add a new product to the inventory.</p>
-                </div>
-                <div class="add-product-image">
-                    <img src="{% static 'images/img_materialsymbolsadd.svg' %}" alt="Add Product" class="product-image">
-                </div>
+    <div class="header">
+        <div></div>
+        <div class="return-link">
+            <a href="{% url 'landing' %}" class="return-link">
+                <img src="{% static 'images/img_letsiconsreturn.svg' %}" alt="Return Icon" class="return-icon">
+                <span>Return to Customer View</span>
             </a>
         </div>
     </div>
+    
+    <h1 class="page-title">Manage Your Menu</h1>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="search-bar">
+        <img src="{% static 'assets/images/img_icbaselinesearch.svg' %}" alt="Search Icon" class="search-icon">
+        <input type="text" placeholder="Search your menu items..." class="search-input">
+    </div>
+    
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-info">
+                <h2 class="product-name">{{ product.name }}</h2>
+                <div class="product-price">₱ {{ product.price }}</div>
+                <p class="product-description">{{ product.description|default:"No description available" }}</p>
+            </div>
+            <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/img_1x1_2.png' %}{% endif %}" alt="{{ product.name }}" class="product-image">
+            <div class="quick-view-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-description="{{ product.description|default:'' }}" data-product-image="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/img_1x1_2.png' %}{% endif %}">
+                <span class="quick-view-text">Quick view</span>
+            </div>
+        </div>
+        {% empty %}
+            <p class="no-products">No menu items available. Click "Add New Product" to start building your menu!</p>
+        {% endfor %}
+
+        <a href="{% url 'addproduct' %}" class="product-card add-new-product">
+            <div class="product-info">
+                <h2 class="product-name">+ Add New Product</h2>
+                <div class="product-price"></div>
+                <p class="product-description">Click here to add a new item to your menu.</p>
+            </div>
+            <div class="add-product-image">
+                <img src="{% static 'images/img_materialsymbolsadd.svg' %}" alt="Add Product" class="product-image">
+            </div>
+        </a>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div id="quickViewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Edit Menu Item</h2>
+            <form id="updateProductForm" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" id="modalProductId">
+                
+                <div class="form-group">
+                    <label for="modalProductName">Item Name</label>
+                    <input type="text" id="modalProductName" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modalProductPrice">Price (₱)</label>
+                    <input type="number" id="modalProductPrice" name="price" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modalProductDescription">Description</label>
+                    <textarea id="modalProductDescription" name="description" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modalProductImage">Item Image</label>
+                    <input type="file" id="modalProductImage" name="image" accept="image/*">
+                    <img id="modalCurrentImage" src="" alt="Current item image" style="max-width: 200px; margin-top: 10px;">
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="submit" class="update-btn">Update Item</button>
+                    <button type="button" class="delete-btn" id="deleteProductBtn">Delete Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Get CSRF token from cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        // Modal functionality
+        const modal = document.getElementById('quickViewModal');
+        const closeBtn = document.getElementsByClassName('close-modal')[0];
+        const quickViewBtns = document.querySelectorAll('.quick-view-btn');
+        const updateForm = document.getElementById('updateProductForm');
+        const deleteBtn = document.getElementById('deleteProductBtn');
+
+        // Open modal
+        quickViewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productId = this.dataset.productId;
+                const productName = this.dataset.productName;
+                const productPrice = this.dataset.productPrice;
+                const productDescription = this.dataset.productDescription;
+                const productImage = this.dataset.productImage;
+
+                document.getElementById('modalProductId').value = productId;
+                document.getElementById('modalProductName').value = productName;
+                document.getElementById('modalProductPrice').value = productPrice;
+                document.getElementById('modalProductDescription').value = productDescription;
+                document.getElementById('modalCurrentImage').src = productImage;
+
+                modal.style.display = 'block';
+            });
+        });
+
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Handle form submission
+        updateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(updateForm);
+            
+            try {
+                const response = await fetch(`/update-product/${formData.get('product_id')}/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                });
+                
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Error updating product');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating product');
+            }
+        });
+
+        // Handle delete
+        deleteBtn.addEventListener('click', async () => {
+            if (confirm('Are you sure you want to delete this product?')) {
+                const productId = document.getElementById('modalProductId').value;
+                
+                try {
+                    const response = await fetch(`/delete-product/${productId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        const data = await response.json();
+                        alert(data.error || 'Error deleting product');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error deleting product');
+                }
+            }
+        });
+    </script>
 {% endblock %}
