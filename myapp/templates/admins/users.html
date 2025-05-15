@@ -1,0 +1,69 @@
+{% extends 'admins/base.html' %}
+{% load static %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<div class="users-container">
+    <div class="users-header">
+        <h1>User Management</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Search users...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+
+    <div class="users-filters">
+        <select class="filter-select">
+            <option value="all">All Users</option>
+            <option value="customers">Customers</option>
+            <option value="business">Business Accounts</option>
+        </select>
+        <select class="sort-select">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="name">Name (A-Z)</option>
+        </select>
+    </div>
+
+    <div class="users-list">
+        <div class="user-card">
+            <div class="user-info">
+                <img src="{% static 'images/default-avatar.png' %}" alt="User Avatar" class="user-avatar">
+                <div class="user-details">
+                    <h3>John Doe</h3>
+                    <p>john.doe@example.com</p>
+                    <span class="user-type customer">Customer</span>
+                </div>
+            </div>
+            <div class="user-actions">
+                <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+
+        <div class="user-card">
+            <div class="user-info">
+                <img src="{% static 'images/default-avatar.png' %}" alt="User Avatar" class="user-avatar">
+                <div class="user-details">
+                    <h3>Jane Smith</h3>
+                    <p>jane.smith@example.com</p>
+                    <span class="user-type business">Business</span>
+                </div>
+            </div>
+            <div class="user-actions">
+                <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagination">
+        <button class="pagination-btn" disabled><i class="fas fa-chevron-left"></i></button>
+        <span class="page-number">Page 1 of 1</span>
+        <button class="pagination-btn" disabled><i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+{% endblock %}

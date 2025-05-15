@@ -1,0 +1,128 @@
+{% load static %}
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Kapina{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'user/base.css' %}">
+    <link rel="stylesheet" href="{% static 'user/landing.css' %}">
+    <link rel="stylesheet" href="{% static 'user/add_product.css' %}">
+    <link rel="stylesheet" href="{% static 'user/business_profile.css' %}">
+    <link rel="stylesheet" href="{% static 'user/shop_page.css' %}">
+    <link rel="stylesheet" href="{% static 'user/shop_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'user/users.css' %}">
+    <link rel="stylesheet" href="{% static 'user/inventory.css' %}">
+    <link rel="stylesheet" href="{% static 'user/auth.css' %}">
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <div class="header-content">
+            <a href="{% url 'landing' %}" class="logo">
+                <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo">
+            </a>
+        </div>
+
+        <div class="search-container">
+            <div class="search-left">
+                <label class="search-label">Where</label>
+                <input type="text" placeholder="Search Coffee Shops" class="search-input">
+            </div>
+            <div class="search-divider"></div>
+            <div class="search-right">
+                <label class="search-label">Drink</label>
+                <input type="text" placeholder="Find your taste" class="search-input">
+            </div>
+            
+            <button class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        {% if not user.is_authenticated or not user.businessprofile %}
+            <a href="{% url 'create_business_profile' %}" class="partner-link">Partner with Kapina</a>
+        {% endif %}
+
+        <div class="profile-container">
+            <div class="profile-btn" onclick="toggleDropdown(event)">
+                <i class="fas fa-user-circle"></i>
+            </div>            
+            <div class="profile-dropdown" id="profileDropdown">
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                        <a href="{% url 'inventory' %}" class="dropdown-item">Inventory</a>
+                        <a href="{% url 'addproduct' %}" class="dropdown-item">Add Product</a>
+                        <a href="{% url 'users' %}" class="dropdown-item">Manage Users</a>
+                        <form method="post" action="{% url 'logout' %}" class="dropdown-item">
+                            {% csrf_token %}
+                            <button type="submit">Logout</button>
+                        </form>
+                    {% elif user.businessprofile %}
+                        <a href="{% url 'shop_page' %}" class="dropdown-item">Switch to Business Profile</a>
+                        <form method="post" action="{% url 'logout' %}" class="dropdown-item">
+                            {% csrf_token %}
+                            <button type="submit">Logout</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'logout' %}" class="dropdown-item">
+                            {% csrf_token %}
+                            <button type="submit">Logout</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}" class="dropdown-item">Login to your account</a>
+                    <a href="{% url 'register' %}" class="dropdown-item">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="header-divider"></div>
+
+    <!-- Page Specific Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <div class="footer-content">
+            <a href="#" class="footer-links">Contact</a>
+            <a href="#" class="footer-links">About Us</a>
+            <a href="#" class="footer-links">Terms of Privacy</a>
+        </div>
+    </div>
+    <script>
+function toggleDropdown(event) {
+    event.stopPropagation(); // Prevent the click event from propagating to window.onclick
+    console.log('Profile button clicked');
+    const dropdown = document.getElementById('profileDropdown');
+
+    // Get the computed style to check visibility
+    const displayStyle = window.getComputedStyle(dropdown).display;
+    console.log('Current display: ', displayStyle);
+
+    if (displayStyle === 'block') {
+        dropdown.style.display = 'none';
+        console.log('Hiding dropdown');
+    } else {
+        dropdown.style.display = 'block';
+        console.log('Showing dropdown');
+    }
+}
+
+window.onclick = function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    if (!event.target.matches('.profile-btn') && !event.target.matches('.dropdown-item')) {
+        if (window.getComputedStyle(dropdown).display === 'block') {
+            dropdown.style.display = 'none';
+            console.log('Closing dropdown when clicked outside');
+        }
+    }
+}
+
+
+    </script>
+
+</body>
+</html>

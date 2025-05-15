@@ -1,0 +1,115 @@
+.login-container,
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+    padding: 20px;
+}
+
+.login-box,
+.register-box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-box h1,
+.register-box h1 {
+    text-align: center;
+    color: #222222;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.login-box form,
+.register-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: rgba(111, 78, 55, 0.93);
+    box-shadow: 0 0 0 2px rgba(111, 78, 55, 0.1);
+}
+
+.form-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+}
+
+.login-btn,
+.register-btn {
+    background: rgba(111, 78, 55, 0.93);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+.login-btn:hover,
+.register-btn:hover {
+    background: rgba(111, 78, 55, 1);
+}
+
+.register-footer,
+.login-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.register-footer a,
+.login-footer a {
+    color: rgba(111, 78, 55, 0.93);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.register-footer a:hover,
+.login-footer a:hover {
+    text-decoration: underline;
+} 

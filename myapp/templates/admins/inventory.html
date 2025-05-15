@@ -1,0 +1,51 @@
+{% extends 'admins/base.html' %}
+{% load static %} 
+{% block content %}
+    <div class="main-content">
+        <div class="header">
+            <div></div>
+            <div class="return-link">
+                <a href="{% url 'landing' %}" class="return-link">
+                    <img src="{% static 'images/img_letsiconsreturn.svg' %}" alt="Return Icon" class="return-icon">
+                    <span>Return to Customer View</span>
+                </a>
+            </div>
+        </div>
+        
+        <h1 class="page-title">Manage Inventory</h1>
+        
+        <div class="search-bar">
+            <img src="{% static 'assets/images/img_icbaselinesearch.svg' %}" alt="Search Icon" class="search-icon">
+            <input type="text" placeholder="Search products..." class="search-input">
+        </div>
+        
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-info">
+                    <h2 class="product-name">{{ product.name }}</h2>
+                    <div class="product-price">₱ {{ product.price }}</div>
+                    <p class="product-description">{{ product.description|default:"No description available" }}</p>
+                </div>
+                <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/img_1x1_2.png' %}{% endif %}" alt="{{ product.name }}" class="product-image">
+                <div class="quick-view-btn">
+                    <span class="quick-view-text">Quick view</span>
+                </div>
+            </div>
+            {% empty %}
+                <p>No products available.</p>
+            {% endfor %}
+
+            <a href="{% url 'addproduct' %}" class="product-card add-new-product">
+                <div class="product-info">
+                    <h2 class="product-name">+ Add New Product</h2>
+                    <div class="product-price"></div>
+                    <p class="product-description">Click here to add a new product to the inventory.</p>
+                </div>
+                <div class="add-product-image">
+                    <img src="{% static 'images/img_materialsymbolsadd.svg' %}" alt="Add Product" class="product-image">
+                </div>
+            </a>
+        </div>
+    </div>
+{% endblock %}

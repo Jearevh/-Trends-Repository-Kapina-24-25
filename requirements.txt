@@ -1,0 +1,19 @@
+Django>=4.2
+psycopg2-binary>=2.9
+
+# Common utilities
+requests>=2.31
+pillow>=10.0
+
+# Environment management
+django-environ>=0.10
+
+# Static file handling
+whitenoise>=6.5
+
+# Linting and formatting
+black>=23.3
+flake8>=6.1
+
+# Optional (comment out if not needed)
+django-debug-toolbar>=4.1
