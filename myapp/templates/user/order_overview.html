@@ -1,0 +1,147 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block title %}Order Overview - {{ business.business_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .order-overview {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .order-header h2 {
+        font-size: 24px;
+        color: #222222;
+        margin-bottom: 10px;
+    }
+
+    .order-number {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .order-items {
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        padding: 20px 0;
+        margin-bottom: 20px;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    .item-details {
+        flex-grow: 1;
+    }
+
+    .item-name {
+        font-weight: 600;
+        color: #222222;
+    }
+
+    .item-quantity {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .item-price {
+        font-weight: 600;
+        color: #222222;
+    }
+
+    .order-total {
+        text-align: right;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 20px 0;
+    }
+
+    .barcode-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .status-label {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #E8F5E9;
+        color: #2E7D32;
+    }
+
+    .pickup-info {
+        margin-top: 20px;
+        padding: 15px;
+        background: #FFF8E1;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .pickup-info h3 {
+        color: #F57C00;
+        margin-bottom: 10px;
+    }
+
+    .pickup-info p {
+        color: #666;
+        margin: 5px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="order-overview">
+        <div class="order-header">
+            <h2>Order Overview</h2>
+            <div class="order-number">Order #{{ order.id }}</div>
+            <div class="status-label">{{ order.get_status_display }}</div>
+        </div>
+
+        <div class="order-items">
+            {% for item in order.items.all %}
+            <div class="order-item">
+                <div class="item-details">
+                    <div class="item-name">{{ item.product.name }}</div>
+                    <div class="item-quantity">Quantity: {{ item.quantity }}</div>
+                </div>
+                <div class="item-price">₱ {{ item.price }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="order-total">
+            Total Amount: ₱ {{ order.total_amount }}
+        </div>
+
+        <div class="pickup-info">
+            <h3>Pickup Information</h3>
+            <p>{{ order.business.business_name }}</p>
+            <p>{{ order.business.address }}</p>
+            <p>Please show this order confirmation when picking up your order.</p>
+        </div>
+
+        <div class="barcode-container">
+            <img src="data:image/png;base64,{{ barcode }}" alt="Order Barcode"/>
+            <div style="margin-top: 10px; color: #666;">{{ order.id }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

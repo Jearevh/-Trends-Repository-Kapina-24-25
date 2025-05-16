@@ -18,5 +18,9 @@ urlpatterns = [
     path('update_user_profile/<int:user_id>/', views.update_user_profile, name='update_user_profile'),
     path('search/location/', views.search_location, name='search_location'),
     path('search/drink/', views.search_drink, name='search_drink'),
+    path('generate-barcode/', views.generate_random_barcode, name='generate_barcode'),
+    path('get-order-details/', views.get_order_details, name='get_order_details'),
+    path('shop/<int:shop_id>/create-order/', views.create_order, name='create_order'),
+    path('order/<int:order_id>/', views.order_overview, name='order_overview'),
 ]
 
