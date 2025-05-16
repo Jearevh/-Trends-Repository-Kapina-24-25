@@ -4,7 +4,14 @@
 {% block title %}Landing Page{% endblock %}
 
 {% block content %}
-<div class="cards-container">
+{% if search_query %}
+<div class="search-results-header">
+    <h2>Search Results for "{{ search_query }}"</h2>
+    <p>Found {{ shops|length }} results</p>
+</div>
+{% endif %}
+
+<div class="cards-container" id="shops-container">
     {% for shop in shops %}
     <a href="{% url 'shop_detail' shop.id %}" class="card-link">
         <div class="card">
@@ -24,11 +31,84 @@
         </div>
     </a>
     {% empty %}
-    <p class="no-shops">No coffee shops available at the moment.</p>
+    <p class="no-shops">No results found for your search.</p>
     {% endfor %}
 </div>
 
-<div class="show-more">
-    <div class="show-more-text">Show more</div>
+{% if has_next %}
+<div class="show-more" id="show-more-container">
+    <div class="show-more-text" id="show-more-btn">Show more</div>
 </div>
+{% endif %}
+
+<script>
+let currentPage = 1;
+const showMoreBtn = document.getElementById('show-more-btn');
+const shopsContainer = document.getElementById('shops-container');
+const showMoreContainer = document.getElementById('show-more-container');
+
+// Set the search inputs with the current search query
+document.addEventListener('DOMContentLoaded', function() {
+    const locationSearch = document.getElementById('locationSearch');
+    const drinkSearch = document.getElementById('drinkSearch');
+    const searchType = '{{ search_type }}';
+    const searchQuery = '{{ search_query }}';
+    
+    if (searchQuery) {
+        if (searchType === 'location') {
+            locationSearch.value = searchQuery;
+        } else if (searchType === 'drink') {
+            drinkSearch.value = searchQuery;
+        }
+    }
+});
+
+if (showMoreBtn) {
+    showMoreBtn.addEventListener('click', async function() {
+        currentPage++;
+        const searchType = '{{ search_type }}';
+        const searchQuery = '{{ search_query }}';
+        
+        try {
+            const response = await fetch(`/?page=${currentPage}&q=${encodeURIComponent(searchQuery)}&type=${searchType}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            const data = await response.json();
+            
+            if (data.shops_html) {
+                shopsContainer.insertAdjacentHTML('beforeend', data.shops_html);
+            }
+            
+            if (!data.has_next) {
+                showMoreContainer.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error loading more shops:', error);
+        }
+    });
+}
+</script>
+
+<style>
+.search-results-header {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.search-results-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.8em;
+}
+
+.search-results-header p {
+    margin: 10px 0 0;
+    color: #666;
+}
+</style>
 {% endblock %}

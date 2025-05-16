@@ -47,6 +47,8 @@ class BusinessProfile(models.Model):
     hours = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     logo = models.ImageField(upload_to='business_logos/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.business_name

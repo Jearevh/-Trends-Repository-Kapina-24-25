@@ -1,0 +1,19 @@
+{% for shop in shops %}
+<a href="{% url 'shop_detail' shop.id %}" class="card-link">
+    <div class="card">
+        {% if shop.logo %}
+            <img src="{{ shop.logo.url }}" alt="{{ shop.business_name }}">
+        {% else %}
+            <img src="https://placehold.co/328x213" alt="{{ shop.business_name }}">
+        {% endif %}
+        <div class="card-header">
+            <div class="card-title">{{ shop.business_name }}</div>
+            <div class="card-location-hours">
+                <div class="card-address">{{ shop.address }}</div>
+                <div class="separator"></div>
+                <div class="card-hours">{{ shop.hours|default:"Hours not specified" }}</div>
+            </div>
+        </div>
+    </div>
+</a>
+{% endfor %} 

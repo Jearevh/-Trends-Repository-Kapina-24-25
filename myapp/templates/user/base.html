@@ -272,10 +272,28 @@
             const drinkQuery = drinkSearch.value.trim();
 
             if (locationQuery) {
-                performSearch('location', locationQuery);
+                window.location.href = `/?q=${encodeURIComponent(locationQuery)}&type=location`;
+            } else if (drinkQuery) {
+                window.location.href = `/?q=${encodeURIComponent(drinkQuery)}&type=drink`;
             }
-            if (drinkQuery) {
-                performSearch('drink', drinkQuery);
+        });
+
+        // Enter key handler for search inputs
+        locationSearch.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = locationSearch.value.trim();
+                if (query) {
+                    window.location.href = `/?q=${encodeURIComponent(query)}&type=location`;
+                }
+            }
+        });
+
+        drinkSearch.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = drinkSearch.value.trim();
+                if (query) {
+                    window.location.href = `/?q=${encodeURIComponent(query)}&type=drink`;
+                }
             }
         });
 

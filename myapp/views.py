@@ -12,6 +12,7 @@ from datetime import datetime
 from django.db.models import Q
 from django.utils import timezone
 import os
+from django.core.paginator import Paginator
 
 def index(request):
     return render(request, 'admins/base.html')
@@ -27,8 +28,45 @@ def inventory(request):
     return render(request, 'admins/inventory.html', {'products': products})
 
 def landing(request):
-    shops = BusinessProfile.objects.all()
-    return render(request, 'user/landing.html', {'shops': shops})
+    query = request.GET.get('q', '')
+    search_type = request.GET.get('type', '')
+    
+    if query and search_type:
+        if search_type == 'location':
+            shops = BusinessProfile.objects.filter(
+                Q(business_name__icontains=query) | 
+                Q(address__icontains=query)
+            )
+        elif search_type == 'drink':
+            products = Product.objects.filter(
+                Q(name__icontains=query) | 
+                Q(description__icontains=query)
+            ).select_related('business')
+            shops = BusinessProfile.objects.filter(id__in=products.values_list('business_id', flat=True))
+        else:
+            shops = BusinessProfile.objects.all()
+    else:
+        shops = BusinessProfile.objects.all()
+    
+    paginator = Paginator(shops, 8)  # Show 8 shops per page
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # If it's an AJAX request, return only the new shops
+        shops_html = render(request, 'user/shops_partial.html', {'shops': page_obj}).content.decode('utf-8')
+        return JsonResponse({
+            'shops_html': shops_html,
+            'has_next': page_obj.has_next(),
+            'next_page': page_obj.next_page_number() if page_obj.has_next() else None
+        })
+    
+    return render(request, 'user/landing.html', {
+        'shops': page_obj,
+        'has_next': page_obj.has_next(),
+        'search_query': query,
+        'search_type': search_type
+    })
     
 @login_required
 def add_product(request):
@@ -173,6 +211,7 @@ def create_business_profile(request):
         if form.is_valid():
             business_profile = form.save(commit=False)
             business_profile.user = request.user
+            # The timestamps will be automatically set by Django's auto_now_add and auto_now
             business_profile.save()
             messages.success(request, 'Business profile created successfully!')
             return redirect('shop_page')
@@ -181,6 +220,10 @@ def create_business_profile(request):
     return render(request, 'user/create_business_profile.html', {'form': form})
 
 def custom_login(request):
+    # Clear any existing messages
+    storage = messages.get_messages(request)
+    storage.used = True  # Mark all messages as used
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -301,7 +344,9 @@ def search_location(request):
     results = [{
         'id': shop.id,
         'name': shop.business_name,
-        'address': shop.address
+        'address': shop.address,
+        'hours': shop.hours or 'Hours not specified',
+        'logo_url': shop.logo.url if shop.logo else None
     } for shop in shops]
     
     return JsonResponse(results, safe=False)
@@ -314,12 +359,16 @@ def search_drink(request):
     products = Product.objects.filter(
         Q(name__icontains=query) | 
         Q(description__icontains=query)
-    )[:10]  # Limit to 10 results
+    ).select_related('business')[:10]  # Limit to 10 results
     
     results = [{
         'id': product.id,
         'name': product.name,
-        'description': product.description or ''
+        'description': product.description or 'No description available',
+        'price': str(product.price),
+        'image_url': product.image.url if product.image else None,
+        'business_name': product.business.business_name,
+        'business_id': product.business.id
     } for product in products]
     
     return JsonResponse(results, safe=False)
