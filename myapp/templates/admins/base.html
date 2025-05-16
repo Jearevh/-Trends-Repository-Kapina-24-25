@@ -39,10 +39,20 @@
         </a>
 
         <div class="user-profile">
-            <img src="{% static 'images/img_ellipse_18.png' %}" alt="User Avatar" class="user-avatar">
+            {% if user.userprofile.profile_picture %}
+                <img src="{{ user.userprofile.profile_picture.url }}" alt="{{ user.username }}" class="user-avatar">
+            {% else %}
+                <img src="{% static 'images/img_ellipse_18.png' %}" alt="User Avatar" class="user-avatar">
+            {% endif %}
             <div class="user-info">
-                <div class="user-name">Lisa Manoban</div>
-                <div class="user-role">Staff</div>
+                <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                <div class="user-role">
+                    {% if user == user.businessprofile.user %}
+                        Owner
+                    {% else %}
+                        {{ user.employee_type|title }}
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

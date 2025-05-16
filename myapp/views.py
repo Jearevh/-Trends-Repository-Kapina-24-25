@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login as auth_login, authenticate
+from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .forms import UserRegistrationForm, BusinessProfileForm, ProductForm, UserProfileForm
+from .forms import UserRegistrationForm, BusinessProfileForm, ProductForm, UserProfileForm, AddAuthorizedUserForm
 from .models import BusinessProfile, Product, Order
 from datetime import datetime
 from django.db.models import Q
+from django.utils import timezone
+import os
 
 def index(request):
     return render(request, 'admins/base.html')
@@ -28,14 +30,25 @@ def landing(request):
     shops = BusinessProfile.objects.all()
     return render(request, 'user/landing.html', {'shops': shops})
     
+@login_required
 def add_product(request):
+    if not hasattr(request.user, 'businessprofile'):
+        messages.error(request, 'You need to create a business profile first.')
+        return redirect('create_business_profile')
+        
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            product = form.save(commit=False)
-            product.business = request.user.businessprofile
-            product.save()
-            return redirect('inventory')
+            try:
+                product = form.save(commit=False)
+                product.business = request.user.businessprofile
+                product.save()
+                messages.success(request, 'Product added successfully!')
+                return redirect('inventory')
+            except Exception as e:
+                messages.error(request, f'Error adding product: {str(e)}')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = ProductForm()
     return render(request, 'admins/addproduct.html', {'form': form})
@@ -44,9 +57,52 @@ def shop_page(request):
     shops = BusinessProfile.objects.all()
     return render(request, 'admins/shop_page.html', {'shops': shops})
 
+@login_required
 def users(request):
-    users = User.objects.all()
-    return render(request, 'admins/users.html', {'users': users})
+    # Check if user has a business profile
+    if not hasattr(request.user, 'businessprofile'):
+        messages.error(request, 'You need to create a business profile first.')
+        return redirect('create_business_profile')
+    
+    # Get only the authorized users for this business
+    authorized_users = request.user.businessprofile.authorized_users.all()
+    
+    # Add the owner to the list if they're not already in it
+    if request.user not in authorized_users:
+        authorized_users = list(authorized_users)
+        authorized_users.insert(0, request.user)
+    
+    if request.method == 'POST' and 'add_authorized_user' in request.POST:
+        # Only business owner can add users
+        if request.user == request.user.businessprofile.user:
+            form = AddAuthorizedUserForm(request.POST)
+            if form.is_valid():
+                user = form.cleaned_data['email_or_username']
+                employee_type = form.cleaned_data['employee_type']
+                
+                # Check if user is already authorized
+                if user in authorized_users:
+                    messages.error(request, 'User is already authorized.')
+                else:
+                    # Add user to authorized users
+                    request.user.businessprofile.authorized_users.add(user)
+                    # Set employee type
+                    user.employee_type = employee_type
+                    user.save()
+                    messages.success(request, f'Successfully authorized {user.username}.')
+                    return redirect('users')
+        else:
+            messages.error(request, 'Only the business owner can add authorized users.')
+    else:
+        form = AddAuthorizedUserForm()
+    
+    context = {
+        'users': authorized_users,
+        'business': request.user.businessprofile,
+        'add_user_form': form,
+        'is_owner': request.user == request.user.businessprofile.user
+    }
+    return render(request, 'admins/users.html', context)
 
 def shop_detail_view(request, shop_id):
     try:
@@ -131,6 +187,10 @@ def custom_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
+            # Create UserProfile if it doesn't exist
+            if not hasattr(user, 'userprofile'):
+                from .models import UserProfile
+                UserProfile.objects.create(user=user)
             return redirect('landing')
         else:
             messages.error(request, 'Invalid username or password.')
@@ -152,8 +212,25 @@ def update_product(request, product_id):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True})
+            try:
+                # If a new image is uploaded, delete the old one
+                if 'image' in request.FILES and product.image:
+                    # Delete the old image file
+                    if os.path.isfile(product.image.path):
+                        os.remove(product.image.path)
+                form.save()
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Product updated successfully',
+                    'product': {
+                        'name': product.name,
+                        'description': product.description,
+                        'price': str(product.price),
+                        'image_url': product.image.url if product.image else None
+                    }
+                })
+            except Exception as e:
+                return JsonResponse({'error': str(e)}, status=500)
         return JsonResponse({'error': form.errors}, status=400)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -181,10 +258,18 @@ def update_profile_picture(request):
         form = UserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
         if form.is_valid():
             form.save()
-            return redirect('landing')
-    else:
-        form = UserProfileForm(instance=request.user.userprofile)
-    return render(request, 'user/update_profile.html', {'form': form})
+            return JsonResponse({
+                'success': True,
+                'message': 'Profile updated successfully'
+            })
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid form data'
+        })
+    return JsonResponse({
+        'success': False,
+        'error': 'Invalid request method'
+    })
 
 @login_required
 def update_user_profile(request, user_id):
@@ -238,3 +323,7 @@ def search_drink(request):
     } for product in products]
     
     return JsonResponse(results, safe=False)
+
+def custom_logout(request):
+    auth_logout(request)
+    return redirect('landing')

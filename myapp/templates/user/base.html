@@ -84,8 +84,14 @@
     <!-- Search Results Container -->
     <div id="searchResults" class="search-results" style="display: none;">
         <div class="search-results-content">
-            <div id="locationResults" class="results-section"></div>
-            <div id="drinkResults" class="results-section"></div>
+            <div id="locationResults" class="results-section">
+                <h3>Shops</h3>
+                <div class="results-list"></div>
+            </div>
+            <div id="drinkResults" class="results-section">
+                <h3>Drinks</h3>
+                <div class="results-list"></div>
+            </div>
         </div>
     </div>
 
@@ -100,6 +106,71 @@
             <a href="#" class="footer-links">Terms of Privacy</a>
         </div>
     </div>
+
+    <style>
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .search-results-content {
+            padding: 15px;
+        }
+
+        .results-section {
+            margin-bottom: 20px;
+        }
+
+        .results-section h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-result-item {
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .search-result-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .search-result-item a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .search-result-item h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 1em;
+        }
+
+        .search-result-item p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
 
     <script>
         // Debounce function to limit API calls
@@ -120,12 +191,22 @@
         const drinkSearch = document.getElementById('drinkSearch');
         const searchButton = document.getElementById('searchButton');
         const searchResults = document.getElementById('searchResults');
-        const locationResults = document.getElementById('locationResults');
-        const drinkResults = document.getElementById('drinkResults');
+        const locationResultsList = document.querySelector('#locationResults .results-list');
+        const drinkResultsList = document.querySelector('#drinkResults .results-list');
 
         // Function to perform search
         async function performSearch(type, query) {
-            if (!query) return;
+            if (!query) {
+                if (type === 'location') {
+                    locationResultsList.innerHTML = '';
+                } else {
+                    drinkResultsList.innerHTML = '';
+                }
+                if (!locationSearch.value.trim() && !drinkSearch.value.trim()) {
+                    searchResults.style.display = 'none';
+                }
+                return;
+            }
 
             try {
                 console.log(`Searching for ${type}:`, query);
@@ -133,7 +214,7 @@
                 const data = await response.json();
                 console.log(`Search results for ${type}:`, data);
 
-                const resultsContainer = type === 'location' ? locationResults : drinkResults;
+                const resultsContainer = type === 'location' ? locationResultsList : drinkResultsList;
                 resultsContainer.innerHTML = '';
 
                 if (data.length === 0) {
@@ -147,15 +228,15 @@
                     if (type === 'location') {
                         resultItem.innerHTML = `
                             <a href="/shop/${item.id}">
-                                <h3>${item.name}</h3>
+                                <h4>${item.name}</h4>
                                 <p>${item.address}</p>
                             </a>
                         `;
                     } else {
                         resultItem.innerHTML = `
                             <a href="/product/${item.id}">
-                                <h3>${item.name}</h3>
-                                <p>${item.description}</p>
+                                <h4>${item.name}</h4>
+                                <p>${item.description || 'No description available'}</p>
                             </a>
                         `;
                     }
@@ -165,7 +246,7 @@
                 searchResults.style.display = 'block';
             } catch (error) {
                 console.error(`Error searching ${type}:`, error);
-                const resultsContainer = type === 'location' ? locationResults : drinkResults;
+                const resultsContainer = type === 'location' ? locationResultsList : drinkResultsList;
                 resultsContainer.innerHTML = `<p>Error searching ${type}. Please try again.</p>`;
             }
         }
@@ -177,26 +258,12 @@
         // Event listeners
         locationSearch.addEventListener('input', (e) => {
             const query = e.target.value.trim();
-            if (query) {
-                debouncedLocationSearch(query);
-            } else {
-                locationResults.innerHTML = '';
-                if (!drinkSearch.value.trim()) {
-                    searchResults.style.display = 'none';
-                }
-            }
+            debouncedLocationSearch(query);
         });
 
         drinkSearch.addEventListener('input', (e) => {
             const query = e.target.value.trim();
-            if (query) {
-                debouncedDrinkSearch(query);
-            } else {
-                drinkResults.innerHTML = '';
-                if (!locationSearch.value.trim()) {
-                    searchResults.style.display = 'none';
-                }
-            }
+            debouncedDrinkSearch(query);
         });
 
         // Search button click handler
@@ -241,54 +308,5 @@
             }
         }
     </script>
-
-    <style>
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 1000;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .search-results-content {
-            padding: 10px;
-        }
-
-        .results-section {
-            margin-bottom: 15px;
-        }
-
-        .search-result-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        .search-result-item a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .search-result-item h3 {
-            margin: 0 0 5px 0;
-            color: #333;
-        }
-
-        .search-result-item p {
-            margin: 0;
-            color: #666;
-            font-size: 0.9em;
-        }
-    </style>
 </body>
 </html>
