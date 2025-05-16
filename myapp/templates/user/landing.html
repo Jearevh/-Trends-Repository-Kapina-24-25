@@ -4,42 +4,119 @@
 {% block title %}Landing Page{% endblock %}
 
 {% block content %}
-{% if search_query %}
-<div class="search-results-header">
-    <h2>Search Results for "{{ search_query }}"</h2>
-    <p>Found {{ shops|length }} results</p>
-</div>
-{% endif %}
+<div class="main-content">
+    {% if search_query %}
+    <div class="search-results-header">
+        <h2>Search Results for "{{ search_query }}"</h2>
+        <p>Found {{ shops|length }} results</p>
+    </div>
+    {% endif %}
 
-<div class="cards-container" id="shops-container">
-    {% for shop in shops %}
-    <a href="{% url 'shop_detail' shop.id %}" class="card-link">
-        <div class="card">
-            {% if shop.logo %}
-                <img src="{{ shop.logo.url }}" alt="{{ shop.business_name }}">
-            {% else %}
-                <img src="https://placehold.co/328x213" alt="{{ shop.business_name }}">
-            {% endif %}
-            <div class="card-header">
-                <div class="card-title">{{ shop.business_name }}</div>
-                <div class="card-location-hours">
-                    <div class="card-address">{{ shop.address }}</div>
-                    <div class="separator"></div>
-                    <div class="card-hours">{{ shop.hours|default:"Hours not specified" }}</div>
+    <div class="cards-container" id="shops-container">
+        {% for shop in shops %}
+        <a href="{% url 'shop_detail' shop.id %}" class="card-link">
+            <div class="card">
+                {% if shop.logo %}
+                    <img src="{{ shop.logo.url }}" alt="{{ shop.business_name }}">
+                {% else %}
+                    <img src="https://placehold.co/328x213" alt="{{ shop.business_name }}">
+                {% endif %}
+                <div class="card-header">
+                    <div class="card-title">{{ shop.business_name }}</div>
+                    <div class="card-location-hours">
+                        <div class="card-address">{{ shop.address }}</div>
+                        <div class="separator"></div>
+                        <div class="card-hours">{{ shop.hours|default:"Hours not specified" }}</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </a>
-    {% empty %}
-    <p class="no-shops">No results found for your search.</p>
-    {% endfor %}
+        </a>
+        {% empty %}
+        <p class="no-shops">No results found for your search.</p>
+        {% endfor %}
+    </div>
+
+    {% if has_next %}
+    <div class="show-more" id="show-more-container">
+        <div class="show-more-text" id="show-more-btn">Show more</div>
+    </div>
+    {% endif %}
 </div>
 
-{% if has_next %}
-<div class="show-more" id="show-more-container">
-    <div class="show-more-text" id="show-more-btn">Show more</div>
-</div>
-{% endif %}
+<style>
+.search-results-header {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.search-results-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.8em;
+}
+
+.search-results-header p {
+    margin: 10px 0 0;
+    color: #666;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-header {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.card-location-hours {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.separator {
+    margin: 5px 0;
+    border-top: 1px solid #eee;
+}
+
+.no-shops {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 40px;
+    color: #666;
+}
+</style>
 
 <script>
 let currentPage = 1;
@@ -90,25 +167,4 @@ if (showMoreBtn) {
     });
 }
 </script>
-
-<style>
-.search-results-header {
-    text-align: center;
-    margin: 20px 0;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.search-results-header h2 {
-    margin: 0;
-    color: #333;
-    font-size: 1.8em;
-}
-
-.search-results-header p {
-    margin: 10px 0 0;
-    color: #666;
-}
-</style>
 {% endblock %}

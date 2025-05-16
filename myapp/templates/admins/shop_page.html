@@ -13,7 +13,9 @@
         </a>
     </div>
 </div>
+
 <h1 class="page-title">{{ shop.business_name }}</h1>
+
 <div class="shop-container">
     <div class="shop-info-card">
         <div class="shop-header">
@@ -35,11 +37,26 @@
                 Manage Inventory
             </a>
         </div>
+        
         <div class="user-details">
             <div class="user-detail">
                 <span class="detail-label">First Name</span>
-                <span class="detail-value">Jeremy Clarence</span>
+                <span class="detail-value">{{ owner.first_name|default:"Not set" }}</span>
             </div>
+            <div class="user-detail">
+                <span class="detail-label">Last Name</span>
+                <span class="detail-value">{{ owner.last_name|default:"Not set" }}</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ owner.email }}</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value">{{ shop.phone_number|default:"Not set" }}</span>
+            </div>
+        </div>
+    </div>
 
     <div class="products-section">
         <h2 class="section-title">Your Products</h2>
@@ -52,15 +69,12 @@
                     {% else %}
                         <div class="default-product-image"></div>
                     {% endif %}
-            </div>
+                </div>
                 <div class="product-info">
                     <h3 class="product-name">{{ product.name }}</h3>
                     <p class="product-price">₱{{ product.price }}</p>
                     <p class="product-description">{{ product.description|default:"No description available" }}</p>
-            </div>
-            <div class="user-detail">
-                <span class="detail-label">Phone Number</span>
-                <span class="detail-value">Jeremy Clarence</span>
+                </div>
             </div>
             {% empty %}
             <div class="no-products">
@@ -77,4 +91,202 @@
         <a href="{% url 'inventory' %}" class="quick-action-btn manage-inventory">Manage Inventory</a>
     </div>
 </div>
+
+<style>
+.shop-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.shop-info-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.shop-details {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.shop-avatar img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.default-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #e0e0e0;
+}
+
+.shop-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+.shop-email {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.user-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.user-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.detail-label {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: #333;
+}
+
+.products-section {
+    margin-top: 30px;
+}
+
+.section-title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.product-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.default-product-image {
+    width: 100%;
+    height: 200px;
+    background: #e0e0e0;
+}
+
+.product-info {
+    padding: 15px;
+}
+
+.product-name {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.product-price {
+    font-weight: 600;
+    color: #6f4e37;
+    margin-bottom: 5px;
+}
+
+.product-description {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.quick-actions-card {
+    margin-top: 30px;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.quick-actions-title {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.quick-action-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-right: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.add-product {
+    background: #6f4e37;
+    color: white;
+}
+
+.manage-inventory {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.quick-action-btn:hover {
+    opacity: 0.9;
+}
+
+.manage-inventory-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #6f4e37;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.manage-icon {
+    width: 20px;
+    height: 20px;
+}
+</style>
 {% endblock %}

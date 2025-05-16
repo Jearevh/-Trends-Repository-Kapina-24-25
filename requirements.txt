@@ -6,6 +6,7 @@ python-dotenv>=1.1.0
 # Common utilities
 requests>=2.31
 pillow>=10.0
+python-barcode>=0.15.1
 
 # Environment management
 django-environ>=0.10

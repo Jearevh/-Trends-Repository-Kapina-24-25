@@ -98,9 +98,23 @@ def add_product(request):
         form = ProductForm()
     return render(request, 'admins/addproduct.html', {'form': form})
 
+@login_required
 def shop_page(request):
-    shops = BusinessProfile.objects.all()
-    return render(request, 'admins/shop_page.html', {'shops': shops})
+    # Get the business profile for the logged-in user
+    try:
+        shop = request.user.businessprofile
+        # Get all products for this business
+        products = Product.objects.filter(business=shop)
+        
+        context = {
+            'shop': shop,
+            'products': products,
+            'owner': shop.user,  # Pass the business owner's information
+        }
+        return render(request, 'admins/shop_page.html', context)
+    except BusinessProfile.DoesNotExist:
+        messages.error(request, 'You need to create a business profile first.')
+        return redirect('create_business_profile')
 
 @login_required
 def users(request):
