@@ -1,115 +1,275 @@
-.business-profile-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px);
-    padding: 20px;
-}
-
-.business-profile-box {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
-}
-
-.business-profile-box h1 {
-    text-align: center;
-    color: #222222;
-    margin-bottom: 30px;
-    font-size: 24px;
-    font-weight: 600;
-}
-
-.business-profile-form {
+/* Base Styles */
+body {
+    background-color: #F5BB81;
+    font-family: 'Inter', 'Istok Web', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+}
+
+.main-content {
+    max-width: 1200px; /* Reduced from 1440px */
+    margin: 0 auto;
+    flex: 1;
+    width: 100%;
+    padding-top: 90px;
+    padding-bottom: 101px;
+    position: relative;
+}
+
+/* Sticky Header (unchanged) */
+.business-header {
+    width: 100%;
+    height: 90px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background: rgba(111, 78, 55, 0.93);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+
+/* Main Content - Compact Version */
+.signup-container {
+    display: flex;
+    margin: 30px auto; /* Reduced from 60px */
+    height: auto; /* Changed from fixed height */
+    min-height: 600px; /* Reduced height */
+    max-height: 80vh; /* Limit maximum height */
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    width: 95%; /* More responsive width */
+}
+
+.illustration-panel {
+    width: 50%; /* Changed from fixed 655px */
+    background-color: #F4E0CC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.illustration-content {
+    text-align: center;
+    width: 100%;
+}
+
+.illustration-title {
+    color: #624323;
+    font-size: 28px; /* Reduced from 32px */
+    font-weight: 700;
+    opacity: 0.8;
+    margin-bottom: 40px; /* Reduced from 60px */
+}
+
+.image-group {
+    position: relative;
+    width: 100%;
+    height: 180px; /* Reduced from 214px */
+    margin: 0 auto;
+}
+
+.main-illustration {
+    position: absolute;
+    right: 0;
+    width: 60%; /* Responsive width */
+    height: auto;
+    max-height: 160px; /* Reduced size */
+}
+
+.food-sample {
+    position: absolute;
+    left: 0;
+    width: 30%; /* Responsive width */
+    height: auto;
+    max-height: 180px; /* Reduced size */
+}
+
+/* Form Panel - Compact Version */
+.form-panel {
+    width: 50%; /* Changed from fixed 646px */
+    background-color: #D3A373;
+    padding: 40px; /* Reduced from 60px 120px */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-title {
+    color: #FBFAF9;
+    font-size: 28px; /* Reduced from 32px */
+    font-weight: 700;
+    opacity: 0.8;
+    margin-bottom: 50px; /* Reduced from 100px */
+}
+
+.business-signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Reduced from 25px */
 }
 
 .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    margin-bottom: 15px; /* Reduced from 20px */
 }
 
 .form-group label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
+    display: block;
+    font-size: 16px; /* Reduced from 18px */
+    font-weight: 700;
+    color: black;
+    opacity: 0.75;
+    margin-bottom: 6px; /* Reduced from 8px */
 }
 
-.form-group input,
-.form-group textarea {
+.form-group input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #d9d9d9;
-    border-radius: 6px;
-    font-size: 14px;
+    padding: 12px; /* Reduced from 15px */
+    background: white;
+    border: none;
+    border-radius: 8px; /* Slightly reduced */
+    opacity: 0.9;
+    font-size: 14px; /* Reduced from 15px */
+    font-family: 'Istok Web', sans-serif;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: rgba(111, 78, 55, 0.93);
-    box-shadow: 0 0 0 2px rgba(111, 78, 55, 0.1);
+.name-fields {
+    display: flex;
+    gap: 12px; /* Reduced from 16px */
 }
 
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.form-text {
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
-}
-
-.error-message {
-    color: #dc3545;
-    font-size: 14px;
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
+.half-width {
+    width: 50%;
 }
 
 .submit-btn {
-    background: rgba(111, 78, 55, 0.93);
-    color: white;
+    width: 200px; /* Reduced from 236px */
+    padding: 14px 20px; /* Reduced from 16px 24px */
+    background-color: rgba(111, 78, 55, 0.93);
+    color: #FAF9F6;
     border: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 16px;
+    border-radius: 8px;
+    font-size: 16px; /* Reduced from 18px */
+    font-weight: 700;
+    cursor: pointer;
+    margin: 30px auto 0; /* Reduced top margin */
+    display: block;
+}
+
+/* Sticky Footer (unchanged) */
+.business-footer {
+    width: 100%;
+    height: 101px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: #6F4E37;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .signup-container {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .illustration-panel,
+    .form-panel {
+        width: 100%;
+    }
+    
+    .illustration-panel {
+        padding: 40px 20px;
+    }
+    
+    .image-group {
+        height: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding-top: 80px;
+        padding-bottom: 90px;
+    }
+    
+    .business-header {
+        height: 80px;
+        padding: 0 20px;
+    }
+    
+    .business-footer {
+        height: 90px;
+        gap: 30px;
+    }
+    
+    .footer-link {
+        font-size: 12px;
+    }
+}
+
+/* Header Styles - Only changed what's necessary */
+.business-header {
+    /* Keep all your existing header styles */
+    width: 100%;
+    height: 90px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background: rgba(111, 78, 55, 0.93);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+
+/* Only changed these logo styles */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    height: 40px; /* Reduced from 52px */
+    width: auto; /* Maintain aspect ratio */
+}
+
+.logo-text {
+    height: 30px; /* Reduced from 43px */
+    width: auto; /* Maintain aspect ratio */
+}
+
+/* Business badge - made to match login link style */
+.business-badge {
+    color: #D9D9D9; /* Same as login link */
+    font-size: 14px; /* Same as login link */
+    font-weight: 600; /* Same as login link */
+    margin-left: 15px;
+    text-decoration: none; /* Added to match */
+}
+
+/* Login link remains exactly the same */
+.login-link {
+    color: #D9D9D9;
+    font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 10px;
+    text-decoration: none;
 }
 
-.submit-btn:hover {
-    background: rgba(111, 78, 55, 1);
-}
-
-/* File input styling */
-.form-group input[type="file"] {
-    position: relative;
-    overflow: hidden;
-}
-
-.form-group input[type="file"]::file-selector-button {
-    padding: 0.5rem 1rem;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 1rem;
-}
-
-.form-group input[type="file"]::file-selector-button:hover {
-    background: #e0e0e0;
-} 

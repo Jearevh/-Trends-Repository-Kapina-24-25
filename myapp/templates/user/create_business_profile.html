@@ -1,48 +1,72 @@
-{% extends 'user/base.html' %}
 {% load static %}
 
-{% block title %}Create Business Profile - Kapina{% endblock %}
+{% block title %} {% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'user/business_profile.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="business-profile-container">
-    <div class="business-profile-box">
-        <h1>Create Your Business Profile</h1>
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                {{ message }}
-            </div>
-            {% endfor %}
+<div class="main-content">
+    <!-- Header/Navigation -->
+    <header class="business-header">
+        <div class="logo-container">
+            <img src="{% static 'images/img_kapina_icon_logo.png' %}" alt="Kapina Icon" class="logo-icon">
+            <img src="{% static 'images/img_kapina_logo.png' %}" alt="Kapina Logo" class="logo-text">
+            <span class="business-badge">for business</span>
         </div>
-        {% endif %}
-        <form method="post" enctype="multipart/form-data" class="business-profile-form">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="id_business_name">Business Name</label>
-                <input type="text" name="business_name" id="id_business_name" class="form-control" required>
+        <div class="login-link">Log in to business account</div>
+    </header>
+
+    <!-- Main Form Section -->
+    <div class="signup-container">
+        <!-- Left Side (Illustration) -->
+        <div class="illustration-panel">
+            <div class="illustration-content">
+                <div class="image-group">
+                    <img src="{% static 'images/img_kapina_logo.png' %}" alt="Business Illustration" class="main-illustration">
+                    <img src="{% static 'images/img_kapina_icon_logo.png' %}" alt="Food Sample" class="food-sample">
+                </div>
+                     <h2 class="illustration-title">Work with Kapina!</h2>               
             </div>
-            <div class="form-group">
-                <label for="id_address">Address</label>
-                <input type="text" name="address" id="id_address" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="id_hours">Business Hours</label>
-                <input type="text" name="hours" id="id_hours" class="form-control" placeholder="e.g., 8:00 AM - 11:00 PM" required>
-            </div>
-            <div class="form-group">
-                <label for="id_description">Description</label>
-                <textarea name="description" id="id_description" class="form-control" rows="4" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="id_logo">Business Logo</label>
-                <input type="file" name="logo" id="id_logo" class="form-control" accept="image/*">
-                <small class="form-text text-muted">
-                    Upload your business logo (optional)
-                </small>
-            </div>
-            <button type="submit" class="submit-btn">Create Business Profile</button>
-        </form>
+        </div>
+
+        <!-- Right Side (Form) -->
+        <div class="form-panel">
+            <h1 class="form-title">Sign up for Kapina for Business</h1>
+            
+            <form class="business-signup-form">
+                <div class="form-group">
+                    <label for="business_name">Business Name *</label>
+                    <input type="text" id="business_name" name="business_name" required>
+                </div>
+
+                <div class="name-fields">
+                    <div class="form-group half-width">
+                        <label for="first_name">First Name</label>
+                        <input type="text" id="first_name" name="first_name">
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" id="last_name" name="last_name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="business_email">Business Email *</label>
+                    <input type="email" id="business_email" name="business_email" required>
+                </div>
+
+                <button type="button" class="submit-btn">Get Started</button>
+            </form>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="business-footer">
+        <div class="footer-link">About Us</div>
+        <div class="footer-link">Contact</div>
+        <div class="footer-link">Terms of Privacy</div>
+    </footer>
 </div>
-{% endblock %} 
+{% endblock %}
