@@ -16,24 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from myapp import views
-from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.landing, name='landing'),
-    path('inventory/', views.inventory, name='inventory'),
-    path('add-product/', views.add_product, name='addproduct'),
-    path('update-product/<int:product_id>/', views.update_product, name='update_product'),
-    path('delete-product/<int:product_id>/', views.delete_product, name='delete_product'),
-    path('shop/', views.shop_page, name='shop_page'),
-    path('shop/<int:shop_id>/', views.shop_detail_view, name='shop_detail'),
-    path('users/', views.users, name='users'),
-    # Authentication URLs
-    path('login/', views.custom_login, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='landing'), name='logout'),
-    path('register/', views.register, name='register'),
-    # Business Profile URLs
-    path('create-business-profile/', views.create_business_profile, name='create_business_profile'),
-]
+    path('', include('myapp.urls')),  # Include myapp URLs
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

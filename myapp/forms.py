@@ -1,10 +1,19 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import BusinessProfile, Product
+from .models import BusinessProfile, Product, UserProfile
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['profile_picture']
+        widgets = {
+            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'})
+        }
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
+    profile_picture = forms.ImageField(required=False, widget=forms.FileInput(attrs={'accept': 'image/*'}))
 
     class Meta:
         model = User
@@ -36,4 +45,16 @@ class ProductForm(forms.ModelForm):
         name = self.cleaned_data.get('name')
         if Product.objects.filter(name__iexact=name).exists():
             raise forms.ValidationError('A product with this name already exists.')
-        return name 
+        return name
+
+class AddAuthorizedUserForm(forms.Form):
+    email_or_username = forms.CharField(
+        label='Email or Username',
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': 'quick-action-input'})
+    )
+    employee_type = forms.CharField(
+        label='Employee Type',
+        max_length=50,
+        widget=forms.TextInput(attrs={'class': 'quick-action-input'})
+    ) 

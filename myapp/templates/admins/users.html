@@ -8,16 +8,49 @@
 {% endblock %}
 
 {% block content %}
+<div class="header">
+    <div></div>
+    <div class="return-link">
+        <a href="{% url 'landing' %}" class="return-link">
+            <img src="{% static 'images/img_letsiconsreturn.svg' %}" alt="Return Icon" class="return-icon">
+            <span>Return to Customer View</span>
+        </a>
+    </div>
+</div>
+<h1 class="page-title">Manage Users</h1>
+<div class="quick-actions-card" style="margin-bottom: 2rem;">
+    <h2 class="quick-actions-title">Quick Actions</h2>
+    <form method="post" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+        {% csrf_token %}
+        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+            {{ add_user_form.email_or_username.label_tag }}
+            {{ add_user_form.email_or_username }}
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+            {{ add_user_form.employee_type.label_tag }}
+            {{ add_user_form.employee_type }}
+        </div>
+        <button type="submit" name="add_authorized_user" class="quick-action-btn add-user" style="height: 38px;">Add Authorized User</button>
+    </form>
+    <button class="quick-action-btn reset-password">Reset Password</button>
+    <button class="quick-action-btn deactivate-account">Deactivate Account</button>
+    <button class="quick-action-btn delete-account">Delete Account</button>
+</div>
 <div class="manage-users-container">
-    <h1 class="manage-users-title">Manage Users</h1>
-    
+    {% for user in users %}
     <div class="user-card">
         <div class="user-header">
             <div class="user-info">
-                <div class="user-avatar"></div>
+                <div class="user-avatar">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                    {% else %}
+                        <div class="default-avatar"></div>
+                    {% endif %}
+                </div>
                 <div>
-                    <div class="user-name">Jeremy Clarence M. Macatangay</div>
-                    <div class="user-email">jcmacatangay@gmail.com</div>
+                    <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="user-email">{{ user.email }}</div>
                 </div>
             </div>
             <button class="edit-profile-btn">
@@ -28,33 +61,17 @@
 
         <div class="user-details">
             <div class="user-detail">
-                <span class="detail-label">First Name</span>
-                <span class="detail-value">Jeremy Clarence</span>
-            </div>
-            <div class="user-detail">
-                <span class="detail-label">Middle Initial</span>
-                <span class="detail-value">M.</span>
-            </div>
-            <div class="user-detail">
-                <span class="detail-label">Last Name</span>
-                <span class="detail-value">Macatangay</span>
-            </div>
-            <div class="user-detail">
-                <span class="detail-label">Phone Number</span>
-                <span class="detail-value">Jeremy Clarence</span>
+                <span class="detail-label">Employee Type</span>
+                <span class="detail-value">{{ user.employee_type }}</span>
             </div>
             <div class="user-detail">
                 <span class="detail-label">Member Since</span>
-                <span class="detail-value">March 5, 2025</span>
+                <span class="detail-value">{{ user.date_joined|date:'F j, Y' }}</span>
             </div>
         </div>
     </div>
-
-    <div class="quick-actions-card">
-        <h2 class="quick-actions-title">Quick Actions</h2>
-        <button class="quick-action-btn reset-password">Reset Password</button>
-        <button class="quick-action-btn deactivate-account">Deactivate Account</button>
-        <button class="quick-action-btn delete-account">Delete Account</button>
-    </div>
+    {% empty %}
+    <p>No authorized users yet.</p>
+    {% endfor %}
 </div>
 {% endblock %}

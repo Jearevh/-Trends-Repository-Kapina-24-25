@@ -28,20 +28,20 @@
         <div class="search-container">
             <div class="search-left">
                 <label class="search-label">Where</label>
-                <input type="text" placeholder="Search Coffee Shops" class="search-input">
+                <input type="text" id="locationSearch" placeholder="Search Coffee Shops" class="search-input">
             </div>
             <div class="search-divider"></div>
             <div class="search-right">
                 <label class="search-label">Drink</label>
-                <input type="text" placeholder="Find your taste" class="search-input">
+                <input type="text" id="drinkSearch" placeholder="Find your taste" class="search-input">
             </div>
             
-            <button class="search-btn">
+            <button id="searchButton" class="search-btn">
                 <i class="fas fa-search"></i>
             </button>
         </div>
 
-        {% if not user.is_authenticated or not user.businessprofile %}
+        {% if not user.is_authenticated or not user.business_profile %}
             <a href="{% url 'create_business_profile' %}" class="partner-link">Partner with Kapina</a>
         {% endif %}
 
@@ -59,7 +59,7 @@
                             {% csrf_token %}
                             <button type="submit">Logout</button>
                         </form>
-                    {% elif user.businessprofile %}
+                    {% elif user.business_profile %}
                         <a href="{% url 'shop_page' %}" class="dropdown-item">Switch to Business Profile</a>
                         <form method="post" action="{% url 'logout' %}" class="dropdown-item">
                             {% csrf_token %}
@@ -72,14 +72,22 @@
                         </form>
                     {% endif %}
                 {% else %}
-                    <a href="{% url 'login' %}" class="dropdown-item">Login to your account</a>
-                    <a href="{% url 'register' %}" class="dropdown-item">Sign Up</a>
+                    <a href="{% url 'login' %}" class="dropdown-item">Login</a>
+                    <a href="{% url 'register' %}" class="dropdown-item">Register</a>
                 {% endif %}
             </div>
         </div>
     </div>
 
     <div class="header-divider"></div>
+
+    <!-- Search Results Container -->
+    <div id="searchResults" class="search-results" style="display: none;">
+        <div class="search-results-content">
+            <div id="locationResults" class="results-section"></div>
+            <div id="drinkResults" class="results-section"></div>
+        </div>
+    </div>
 
     <!-- Page Specific Content -->
     {% block content %}{% endblock %}
@@ -92,37 +100,195 @@
             <a href="#" class="footer-links">Terms of Privacy</a>
         </div>
     </div>
+
     <script>
-function toggleDropdown(event) {
-    event.stopPropagation(); // Prevent the click event from propagating to window.onclick
-    console.log('Profile button clicked');
-    const dropdown = document.getElementById('profileDropdown');
-
-    // Get the computed style to check visibility
-    const displayStyle = window.getComputedStyle(dropdown).display;
-    console.log('Current display: ', displayStyle);
-
-    if (displayStyle === 'block') {
-        dropdown.style.display = 'none';
-        console.log('Hiding dropdown');
-    } else {
-        dropdown.style.display = 'block';
-        console.log('Showing dropdown');
-    }
-}
-
-window.onclick = function(event) {
-    const dropdown = document.getElementById('profileDropdown');
-    if (!event.target.matches('.profile-btn') && !event.target.matches('.dropdown-item')) {
-        if (window.getComputedStyle(dropdown).display === 'block') {
-            dropdown.style.display = 'none';
-            console.log('Closing dropdown when clicked outside');
+        // Debounce function to limit API calls
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
         }
-    }
-}
 
+        // Search functionality
+        const locationSearch = document.getElementById('locationSearch');
+        const drinkSearch = document.getElementById('drinkSearch');
+        const searchButton = document.getElementById('searchButton');
+        const searchResults = document.getElementById('searchResults');
+        const locationResults = document.getElementById('locationResults');
+        const drinkResults = document.getElementById('drinkResults');
 
+        // Function to perform search
+        async function performSearch(type, query) {
+            if (!query) return;
+
+            try {
+                console.log(`Searching for ${type}:`, query);
+                const response = await fetch(`/search/${type}/?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                console.log(`Search results for ${type}:`, data);
+
+                const resultsContainer = type === 'location' ? locationResults : drinkResults;
+                resultsContainer.innerHTML = '';
+
+                if (data.length === 0) {
+                    resultsContainer.innerHTML = `<p>No ${type} results found</p>`;
+                    return;
+                }
+
+                data.forEach(item => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    if (type === 'location') {
+                        resultItem.innerHTML = `
+                            <a href="/shop/${item.id}">
+                                <h3>${item.name}</h3>
+                                <p>${item.address}</p>
+                            </a>
+                        `;
+                    } else {
+                        resultItem.innerHTML = `
+                            <a href="/product/${item.id}">
+                                <h3>${item.name}</h3>
+                                <p>${item.description}</p>
+                            </a>
+                        `;
+                    }
+                    resultsContainer.appendChild(resultItem);
+                });
+
+                searchResults.style.display = 'block';
+            } catch (error) {
+                console.error(`Error searching ${type}:`, error);
+                const resultsContainer = type === 'location' ? locationResults : drinkResults;
+                resultsContainer.innerHTML = `<p>Error searching ${type}. Please try again.</p>`;
+            }
+        }
+
+        // Debounced search functions
+        const debouncedLocationSearch = debounce((query) => performSearch('location', query), 300);
+        const debouncedDrinkSearch = debounce((query) => performSearch('drink', query), 300);
+
+        // Event listeners
+        locationSearch.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            if (query) {
+                debouncedLocationSearch(query);
+            } else {
+                locationResults.innerHTML = '';
+                if (!drinkSearch.value.trim()) {
+                    searchResults.style.display = 'none';
+                }
+            }
+        });
+
+        drinkSearch.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            if (query) {
+                debouncedDrinkSearch(query);
+            } else {
+                drinkResults.innerHTML = '';
+                if (!locationSearch.value.trim()) {
+                    searchResults.style.display = 'none';
+                }
+            }
+        });
+
+        // Search button click handler
+        searchButton.addEventListener('click', () => {
+            const locationQuery = locationSearch.value.trim();
+            const drinkQuery = drinkSearch.value.trim();
+
+            if (locationQuery) {
+                performSearch('location', locationQuery);
+            }
+            if (drinkQuery) {
+                performSearch('drink', drinkQuery);
+            }
+        });
+
+        // Close search results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container') && !e.target.closest('#searchResults')) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // Profile dropdown functionality
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('profileDropdown');
+            const displayStyle = window.getComputedStyle(dropdown).display;
+            
+            if (displayStyle === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+
+        window.onclick = function(event) {
+            const dropdown = document.getElementById('profileDropdown');
+            if (!event.target.matches('.profile-btn') && !event.target.matches('.dropdown-item')) {
+                if (window.getComputedStyle(dropdown).display === 'block') {
+                    dropdown.style.display = 'none';
+                }
+            }
+        }
     </script>
 
+    <style>
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .search-results-content {
+            padding: 10px;
+        }
+
+        .results-section {
+            margin-bottom: 15px;
+        }
+
+        .search-result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .search-result-item h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .search-result-item p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
 </body>
 </html>

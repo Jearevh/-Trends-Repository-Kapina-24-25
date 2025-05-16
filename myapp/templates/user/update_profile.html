@@ -1,0 +1,12 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+<div class="update-profile-container">
+    <h2>Update Profile Picture</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update Profile Picture</button>
+    </form>
+</div>
+{% endblock %} 

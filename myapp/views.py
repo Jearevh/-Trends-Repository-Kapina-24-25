@@ -6,9 +6,10 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .forms import UserRegistrationForm, BusinessProfileForm, ProductForm
+from .forms import UserRegistrationForm, BusinessProfileForm, ProductForm, UserProfileForm
 from .models import BusinessProfile, Product, Order
 from datetime import datetime
+from django.db.models import Q
 
 def index(request):
     return render(request, 'admins/base.html')
@@ -173,3 +174,67 @@ def delete_product(request, product_id):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def update_profile_picture(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
+        if form.is_valid():
+            form.save()
+            return redirect('landing')
+    else:
+        form = UserProfileForm(instance=request.user.userprofile)
+    return render(request, 'user/update_profile.html', {'form': form})
+
+@login_required
+def update_user_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.user != user and not request.user.is_superuser:
+        messages.error(request, 'You do not have permission to update this profile.')
+        return redirect('landing')
+        
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user.userprofile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('landing')
+    else:
+        form = UserProfileForm(instance=user.userprofile)
+    return render(request, 'user/update_profile.html', {'form': form})
+
+def search_location(request):
+    query = request.GET.get('q', '')
+    if not query:
+        return JsonResponse([], safe=False)
+    
+    shops = BusinessProfile.objects.filter(
+        Q(business_name__icontains=query) | 
+        Q(address__icontains=query)
+    )[:10]  # Limit to 10 results
+    
+    results = [{
+        'id': shop.id,
+        'name': shop.business_name,
+        'address': shop.address
+    } for shop in shops]
+    
+    return JsonResponse(results, safe=False)
+
+def search_drink(request):
+    query = request.GET.get('q', '')
+    if not query:
+        return JsonResponse([], safe=False)
+    
+    products = Product.objects.filter(
+        Q(name__icontains=query) | 
+        Q(description__icontains=query)
+    )[:10]  # Limit to 10 results
+    
+    results = [{
+        'id': product.id,
+        'name': product.name,
+        'description': product.description or ''
+    } for product in products]
+    
+    return JsonResponse(results, safe=False)

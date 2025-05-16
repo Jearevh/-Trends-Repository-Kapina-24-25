@@ -113,3 +113,36 @@ body {
     font-family: 'Poppins', sans-serif;
     color: rgba(0, 0, 0, 0.5);
 }
+
+/* Header and Page Title Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.return-link {
+    display: flex;
+    align-items: center;
+    text-decoration: underline;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000000;
+    cursor: pointer;
+}
+
+.return-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+}
+
+.page-title {
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: #000000;
+    margin-bottom: 20px;
+}
