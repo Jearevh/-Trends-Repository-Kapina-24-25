@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'user/users.css' %}">
     <link rel="stylesheet" href="{% static 'user/inventory.css' %}">
     <link rel="stylesheet" href="{% static 'user/auth.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Header Section -->
@@ -28,15 +29,15 @@
         <div class="search-container">
             <div class="search-left">
                 <label class="search-label">Where</label>
-                <input type="text" placeholder="Search Coffee Shops" class="search-input">
+                <input type="text" id="locationSearchInput" placeholder="Search Coffee Shops" class="search-input">
             </div>
             <div class="search-divider"></div>
             <div class="search-right">
                 <label class="search-label">Drink</label>
-                <input type="text" placeholder="Find your taste" class="search-input">
+                <input type="text" id="drinkSearchInput" placeholder="Find your taste" class="search-input">
             </div>
             
-            <button class="search-btn">
+            <button class="search-btn" onclick="performSearch()">
                 <i class="fas fa-search"></i>
             </button>
         </div>
@@ -92,37 +93,165 @@
             <a href="#" class="footer-links">Terms of Privacy</a>
         </div>
     </div>
+
     <script>
-function toggleDropdown(event) {
-    event.stopPropagation(); // Prevent the click event from propagating to window.onclick
-    console.log('Profile button clicked');
-    const dropdown = document.getElementById('profileDropdown');
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        console.log('Profile button clicked');
+        const dropdown = document.getElementById('profileDropdown');
+        const displayStyle = window.getComputedStyle(dropdown).display;
+        console.log('Current display: ', displayStyle);
 
-    // Get the computed style to check visibility
-    const displayStyle = window.getComputedStyle(dropdown).display;
-    console.log('Current display: ', displayStyle);
-
-    if (displayStyle === 'block') {
-        dropdown.style.display = 'none';
-        console.log('Hiding dropdown');
-    } else {
-        dropdown.style.display = 'block';
-        console.log('Showing dropdown');
-    }
-}
-
-window.onclick = function(event) {
-    const dropdown = document.getElementById('profileDropdown');
-    if (!event.target.matches('.profile-btn') && !event.target.matches('.dropdown-item')) {
-        if (window.getComputedStyle(dropdown).display === 'block') {
+        if (displayStyle === 'block') {
             dropdown.style.display = 'none';
-            console.log('Closing dropdown when clicked outside');
+            console.log('Hiding dropdown');
+        } else {
+            dropdown.style.display = 'block';
+            console.log('Showing dropdown');
         }
     }
-}
 
+    window.onclick = function(event) {
+        const dropdown = document.getElementById('profileDropdown');
+        if (!event.target.matches('.profile-btn') && !event.target.matches('.dropdown-item')) {
+            if (window.getComputedStyle(dropdown).display === 'block') {
+                dropdown.style.display = 'none';
+                console.log('Closing dropdown when clicked outside');
+            }
+        }
+    }
 
+    // Search functionality
+    const locationSearchInput = document.getElementById('locationSearchInput');
+    const drinkSearchInput = document.getElementById('drinkSearchInput');
+    let locationSearchTimeout;
+    let drinkSearchTimeout;
+
+    function performSearch() {
+        const locationQuery = locationSearchInput.value.trim();
+        const drinkQuery = drinkSearchInput.value.trim();
+
+        if (locationQuery) {
+            performLocationSearch(locationQuery);
+        }
+        if (drinkQuery) {
+            performDrinkSearch(drinkQuery);
+        }
+    }
+
+    locationSearchInput.addEventListener('input', function() {
+        clearTimeout(locationSearchTimeout);
+        const query = this.value.trim();
+        if (query) {
+            locationSearchTimeout = setTimeout(() => {
+                performLocationSearch(query);
+            }, 300);
+        }
+    });
+
+    drinkSearchInput.addEventListener('input', function() {
+        clearTimeout(drinkSearchTimeout);
+        const query = this.value.trim();
+        if (query) {
+            drinkSearchTimeout = setTimeout(() => {
+                performDrinkSearch(query);
+            }, 300);
+        }
+    });
+
+    function performLocationSearch(query) {
+        console.log('Performing location search for:', query);
+        const searchUrl = `/search/?q=${encodeURIComponent(query)}&type=where`;
+        console.log('Location search URL:', searchUrl);
+
+        fetch(searchUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Location search data:', data);
+                if (data.results && data.results.length > 0) {
+                    displayLocationResults(data.results);
+                } else {
+                    // Clear the results if no matches found
+                    const cardsContainer = document.querySelector('.cards-container');
+                    if (cardsContainer) {
+                        cardsContainer.innerHTML = '<p class="no-results">No locations found</p>';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Location search error:', error);
+                const cardsContainer = document.querySelector('.cards-container');
+                if (cardsContainer) {
+                    cardsContainer.innerHTML = '<p class="error">Error searching locations</p>';
+                }
+            });
+    }
+
+    function performDrinkSearch(query) {
+        console.log('Performing drink search for:', query);
+        const searchUrl = `/search/?q=${encodeURIComponent(query)}&type=drink`;
+        console.log('Drink search URL:', searchUrl);
+
+        fetch(searchUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Drink search data:', data);
+                if (data.results && data.results.length > 0) {
+                    displayDrinkResults(data.results);
+                } else {
+                    // Clear the results if no matches found
+                    const cardsContainer = document.querySelector('.cards-container');
+                    if (cardsContainer) {
+                        cardsContainer.innerHTML = '<p class="no-results">No drinks found</p>';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Drink search error:', error);
+                const cardsContainer = document.querySelector('.cards-container');
+                if (cardsContainer) {
+                    cardsContainer.innerHTML = '<p class="error">Error searching drinks</p>';
+                }
+            });
+    }
+
+    function displayLocationResults(shops) {
+        const cardsContainer = document.querySelector('.cards-container');
+        if (cardsContainer) {
+            cardsContainer.innerHTML = shops.map(shop => `
+                <div class="card">
+                    <img src="${shop.image || '{% static "images/default-shop.jpg" %}'}" alt="${shop.name}">
+                    <div class="card-header">
+                        <h3 class="card-title">${shop.name}</h3>
+                        <div class="card-location-hours">
+                            <span class="card-address">${shop.address}</span>
+                            <span class="separator"></span>
+                            <span class="card-hours">8:00 am to 11:00pm</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function displayDrinkResults(products) {
+        const cardsContainer = document.querySelector('.cards-container');
+        if (cardsContainer) {
+            cardsContainer.innerHTML = products.map(product => `
+                <div class="card">
+                    <img src="${product.image || '{% static "images/default-product.jpg" %}'}" alt="${product.name}">
+                    <div class="card-header">
+                        <h3 class="card-title">${product.name}</h3>
+                        <div class="card-location-hours">
+                            <span class="card-address">${product.shop_name}</span>
+                            <span class="separator"></span>
+                            <span class="card-hours">₱${product.price}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
     </script>
-
 </body>
 </html>

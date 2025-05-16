@@ -9,6 +9,9 @@ from django.views.decorators.http import require_POST
 from .forms import UserRegistrationForm, BusinessProfileForm, ProductForm
 from .models import BusinessProfile, Product, Order
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 def index(request):
     return render(request, 'admins/base.html')
@@ -180,4 +183,49 @@ def delete_product(request, product_id):
         product.delete()
         return JsonResponse({'success': True})
     except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def search_view(request):
+    query = request.GET.get('q', '').strip()
+    search_type = request.GET.get('type', '')
+    
+    logger.info(f"Search request - Query: {query}, Type: {search_type}")
+    
+    if not query:
+        return JsonResponse({'results': []})
+    
+    try:
+        if search_type == 'where':
+            # Search for shops by address
+            shops = BusinessProfile.objects.filter(address__icontains=query)
+            results = [{
+                'id': shop.id,
+                'name': shop.business_name,
+                'address': shop.address,
+                'hours': shop.hours or 'Hours not specified',
+                'image': shop.logo.url if shop.logo else None
+            } for shop in shops]
+            logger.info(f"Found {len(results)} shops matching '{query}'")
+            
+        elif search_type == 'drink':
+            # Search for products by name
+            products = Product.objects.filter(name__icontains=query)
+            results = [{
+                'id': product.id,
+                'name': product.name,
+                'price': float(product.price),
+                'shop_name': product.business.business_name,
+                'shop_id': product.business.id,
+                'image': product.image.url if product.image else None
+            } for product in products]
+            logger.info(f"Found {len(results)} products matching '{query}'")
+            
+        else:
+            logger.warning(f"Invalid search type: {search_type}")
+            return JsonResponse({'error': 'Invalid search type'}, status=400)
+        
+        return JsonResponse({'results': results})
+        
+    except Exception as e:
+        logger.error(f"Search error: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)

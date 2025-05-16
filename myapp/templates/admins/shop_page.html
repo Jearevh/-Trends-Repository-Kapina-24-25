@@ -4,8 +4,14 @@
 {% block title %}{{ shop.business_name }} - Shop Page{% endblock %}
 
 {% block content %}
+<div class="return-link">
+    <a href="{% url 'landing' %}" class="return-link">
+        <img src="{% static 'images/img_letsiconsreturn.svg' %}" alt="Return Icon" class="return-icon">
+        <span>Return to Customer View</span>
+    </a>
+</div>
 <div class="shop-container">
-    <h1 class="shop-title">{{ shop.business_name }}</h1>
+    <h1 class="page-title">{{ shop.business_name }}</h1>
     
     <div class="shop-info-card">
         <div class="shop-header">

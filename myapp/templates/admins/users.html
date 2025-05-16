@@ -8,8 +8,14 @@
 {% endblock %}
 
 {% block content %}
+<div class="return-link">
+    <a href="{% url 'landing' %}" class="return-link">
+        <img src="{% static 'images/img_letsiconsreturn.svg' %}" alt="Return Icon" class="return-icon">
+        <span>Return to Customer View</span>
+    </a>
+</div>
 <div class="manage-users-container">
-    <h1 class="manage-users-title">Manage Users</h1>
+    <h1 class="page-title">Manage Users</h1>
     
     <div class="user-card">
         <div class="user-header">
@@ -47,7 +53,9 @@
                 <span class="detail-label">Member Since</span>
                 <span class="detail-value">March 5, 2025</span>
             </div>
+
         </div>
+
     </div>
 
     <div class="quick-actions-card">

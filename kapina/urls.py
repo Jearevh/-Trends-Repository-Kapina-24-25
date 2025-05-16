@@ -29,6 +29,7 @@ urlpatterns = [
     path('shop/', views.shop_page, name='shop_page'),
     path('shop/<int:shop_id>/', views.shop_detail_view, name='shop_detail'),
     path('users/', views.users, name='users'),
+    path('search/', views.search_view, name='search'),
     # Authentication URLs
     path('login/', views.custom_login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='landing'), name='logout'),

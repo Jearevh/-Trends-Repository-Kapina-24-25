@@ -31,4 +31,130 @@
 <div class="show-more">
     <div class="show-more-text">Show more</div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const locationSearchInput = document.getElementById('locationSearchInput');
+    const drinkSearchInput = document.getElementById('drinkSearchInput');
+    const cardsContainer = document.querySelector('.cards-container');
+    let locationSearchTimeout;
+    let drinkSearchTimeout;
+
+    function performSearch() {
+        const locationQuery = locationSearchInput.value.trim();
+        const drinkQuery = drinkSearchInput.value.trim();
+
+        if (locationQuery) {
+            performLocationSearch(locationQuery);
+        }
+        if (drinkQuery) {
+            performDrinkSearch(drinkQuery);
+        }
+    }
+
+    locationSearchInput.addEventListener('input', function() {
+        clearTimeout(locationSearchTimeout);
+        const query = this.value.trim();
+        if (query) {
+            locationSearchTimeout = setTimeout(() => {
+                performLocationSearch(query);
+            }, 300);
+        } else {
+            // If search is cleared, show all shops
+            window.location.reload();
+        }
+    });
+
+    drinkSearchInput.addEventListener('input', function() {
+        clearTimeout(drinkSearchTimeout);
+        const query = this.value.trim();
+        if (query) {
+            drinkSearchTimeout = setTimeout(() => {
+                performDrinkSearch(query);
+            }, 300);
+        } else {
+            // If search is cleared, show all shops
+            window.location.reload();
+        }
+    });
+
+    function performLocationSearch(query) {
+        console.log('Performing location search for:', query);
+        const searchUrl = `/search/?q=${encodeURIComponent(query)}&type=where`;
+        console.log('Location search URL:', searchUrl);
+
+        fetch(searchUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Location search data:', data);
+                if (data.results && data.results.length > 0) {
+                    displayLocationResults(data.results);
+                } else {
+                    cardsContainer.innerHTML = '<p class="no-shops">No locations found</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Location search error:', error);
+                cardsContainer.innerHTML = '<p class="no-shops">Error searching locations</p>';
+            });
+    }
+
+    function performDrinkSearch(query) {
+        console.log('Performing drink search for:', query);
+        const searchUrl = `/search/?q=${encodeURIComponent(query)}&type=drink`;
+        console.log('Drink search URL:', searchUrl);
+
+        fetch(searchUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Drink search data:', data);
+                if (data.results && data.results.length > 0) {
+                    displayDrinkResults(data.results);
+                } else {
+                    cardsContainer.innerHTML = '<p class="no-shops">No drinks found</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Drink search error:', error);
+                cardsContainer.innerHTML = '<p class="no-shops">Error searching drinks</p>';
+            });
+    }
+
+    function displayLocationResults(shops) {
+        cardsContainer.innerHTML = shops.map(shop => `
+            <a href="/shop/${shop.id}/" class="card-link">
+                <div class="card">
+                    <img src="${shop.image || 'https://placehold.co/328x213'}" alt="${shop.name}">
+                    <div class="card-header">
+                        <div class="card-title">${shop.name}</div>
+                        <div class="card-location-hours">
+                            <div class="card-address">${shop.address}</div>
+                            <div class="separator"></div>
+                            <div class="card-hours">${shop.hours}</div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        `).join('');
+    }
+
+    function displayDrinkResults(products) {
+        cardsContainer.innerHTML = products.map(product => `
+            <a href="/shop/${product.shop_id}/" class="card-link">
+                <div class="card">
+                    <img src="${product.image || 'https://placehold.co/328x213'}" alt="${product.name}">
+                    <div class="card-header">
+                        <div class="card-title">${product.name}</div>
+                        <div class="card-location-hours">
+                            <div class="card-address">${product.shop_name}</div>
+                            <div class="separator"></div>
+                            <div class="card-hours">₱${product.price}</div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        `).join('');
+    }
+});
+</script>
 {% endblock %}
