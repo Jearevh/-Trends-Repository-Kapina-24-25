@@ -46,9 +46,44 @@ class UserRegistrationForm(forms.ModelForm):
         return confirm_password
 
 class BusinessProfileForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    business_email = forms.EmailField(required=True)
+    username = forms.CharField(max_length=150, required=True)
+    password = forms.CharField(widget=forms.PasswordInput, required=True)
+
     class Meta:
         model = BusinessProfile
-        fields = ['business_name', 'address', 'hours', 'description', 'logo']
+        fields = ['business_name']
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('This username is already taken.')
+        return username
+
+    def clean_business_email(self):
+        email = self.cleaned_data.get('business_email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('This email is already registered.')
+        return email
+
+    def save(self, commit=True):
+        # Create the user first
+        user = User.objects.create_user(
+            username=self.cleaned_data['username'],
+            email=self.cleaned_data['business_email'],
+            password=self.cleaned_data['password'],
+            first_name=self.cleaned_data['first_name'],
+            last_name=self.cleaned_data['last_name']
+        )
+        
+        # Create the business profile
+        business_profile = super().save(commit=False)
+        business_profile.user = user
+        if commit:
+            business_profile.save()
+        return business_profile
 
 class ProductForm(forms.ModelForm):
     class Meta:

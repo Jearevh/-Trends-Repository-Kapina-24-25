@@ -6,6 +6,20 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'admin_css/users.css' %}">
 <style>
+    .user-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .username {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: normal;
+        margin-left: 8px;
+    }
+
     .modal {
         display: none;
         position: fixed;
@@ -83,6 +97,116 @@
         color: white;
         border: none;
     }
+
+    .quick-actions-card {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 32px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .quick-actions-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .add-user-form {
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 16px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #6f4e37;
+        box-shadow: 0 0 0 2px rgba(111, 78, 55, 0.1);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .quick-action-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .quick-action-btn.add-user {
+        background: #6f4e37;
+        color: white;
+        height: 38px;
+    }
+
+    .quick-action-btn.add-user:hover {
+        background: #5a3d2b;
+    }
+
+    .quick-action-btn.reset-password {
+        background: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .quick-action-btn.reset-password:hover {
+        background: #e9ecef;
+    }
+
+    .quick-action-btn.deactivate-account {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+
+    .quick-action-btn.deactivate-account:hover {
+        background: #ffeeba;
+    }
+
+    .quick-action-btn.delete-account {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .quick-action-btn.delete-account:hover {
+        background: #f5c6cb;
+    }
 </style>
 {% endblock %}
 
@@ -99,23 +223,27 @@
 <h1 class="page-title">Manage Users</h1>
 
 {% if is_owner %}
-<div class="quick-actions-card" style="margin-bottom: 2rem;">
+<div class="quick-actions-card">
     <h2 class="quick-actions-title">Quick Actions</h2>
-    <form method="post" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <form method="post" class="add-user-form">
         {% csrf_token %}
-        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
-            {{ add_user_form.email_or_username.label_tag }}
-            {{ add_user_form.email_or_username }}
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_email_or_username">Email or Username</label>
+                {{ add_user_form.email_or_username }}
+            </div>
+            <div class="form-group">
+                <label for="id_employee_type">Employee Type</label>
+                {{ add_user_form.employee_type }}
+            </div>
+            <button type="submit" name="add_authorized_user" class="quick-action-btn add-user">Add User</button>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
-            {{ add_user_form.employee_type.label_tag }}
-            {{ add_user_form.employee_type }}
-        </div>
-        <button type="submit" name="add_authorized_user" class="quick-action-btn add-user" style="height: 38px;">Add Authorized User</button>
     </form>
-    <button class="quick-action-btn reset-password">Reset Password</button>
-    <button class="quick-action-btn deactivate-account">Deactivate Account</button>
-    <button class="quick-action-btn delete-account">Delete Account</button>
+    <div class="action-buttons">
+        <button class="quick-action-btn reset-password">Reset Password</button>
+        <button class="quick-action-btn deactivate-account">Deactivate Account</button>
+        <button class="quick-action-btn delete-account">Delete Account</button>
+    </div>
 </div>
 {% endif %}
 
@@ -132,7 +260,10 @@
                     {% endif %}
                 </div>
                 <div>
-                    <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="user-name">
+                        {{ user.get_full_name|default:user.username }}
+                        <span class="username">@{{ user.username }}</span>
+                    </div>
                     <div class="user-email">{{ user.email }}</div>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -208,7 +208,7 @@ def register(request):
             
         try:
             user = User.objects.create_user(username=username, password=password1)
-            auth_login(request, user)
+            login(request, user)
             messages.success(request, 'Registration successful!')
             return redirect('landing')
         except Exception as e:
@@ -219,23 +219,21 @@ def register(request):
 
 @login_required
 def create_business_profile(request):
-    # Check if user already has a business profile
-    try:
-        existing_profile = BusinessProfile.objects.get(user=request.user)
-        messages.warning(request, 'You already have a business profile.')
-        return redirect('shop_page')
-    except BusinessProfile.DoesNotExist:
-        pass
-
     if request.method == 'POST':
-        form = BusinessProfileForm(request.POST, request.FILES)
+        form = BusinessProfileForm(request.POST)
         if form.is_valid():
-            business_profile = form.save(commit=False)
-            business_profile.user = request.user
-            # The timestamps will be automatically set by Django's auto_now_add and auto_now
-            business_profile.save()
-            messages.success(request, 'Business profile created successfully!')
-            return redirect('shop_page')
+            try:
+                business_profile = form.save()
+                # Log the user in
+                user = authenticate(
+                    username=form.cleaned_data['username'],
+                    password=form.cleaned_data['password']
+                )
+                if user:
+                    login(request, user)
+                return redirect('shop_page')
+            except Exception as e:
+                form.add_error(None, str(e))
     else:
         form = BusinessProfileForm()
     return render(request, 'user/create_business_profile.html', {'form': form})
@@ -250,7 +248,7 @@ def custom_login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            auth_login(request, user)
+            login(request, user)
             # Create UserProfile if it doesn't exist
             if not hasattr(user, 'userprofile'):
                 from .models import UserProfile
@@ -395,8 +393,11 @@ def search_drink(request):
     return JsonResponse(results, safe=False)
 
 def custom_logout(request):
-    logout(request)
-    return redirect('landing')  # Redirect to a landing page or any other page after logout
+    if request.method == 'POST':
+        logout(request)
+        messages.success(request, 'You have been successfully logged out.')
+        return redirect('landing')
+    return redirect('landing')
 
 # Function to generate a random barcode
 @login_required
