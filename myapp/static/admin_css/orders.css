@@ -1,0 +1,139 @@
+.orders-container {
+    padding: 20px;
+}
+
+.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.order-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.order-info h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.order-date {
+    font-size: 14px;
+    color: #666;
+}
+
+.order-status {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.order-status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.order-status.confirmed {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.order-status.preparing {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.order-status.ready {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.order-status.completed {
+    background-color: #c3e6cb;
+    color: #155724;
+}
+
+.order-status.cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.order-items {
+    margin: 15px 0;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.item-name {
+    font-size: 14px;
+    color: #333;
+}
+
+.item-price {
+    font-size: 14px;
+    color: #666;
+}
+
+.order-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-total {
+    font-size: 16px;
+    color: #333;
+}
+
+.order-barcode {
+    font-size: 14px;
+    color: #666;
+    font-family: monospace;
+}
+
+.order-actions {
+    margin-top: 10px;
+}
+
+.status-select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+}
+
+.no-orders {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .orders-grid {
+        grid-template-columns: 1fr;
+    }
+} 

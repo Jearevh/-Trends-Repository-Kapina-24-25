@@ -35,5 +35,9 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     # Business Profile URLs
     path('create-business-profile/', views.create_business_profile, name='create_business_profile'),
+    # Order URLs
+    path('create-order/', views.create_order, name='create_order'),
+    path('manage-orders/', views.manage_orders, name='manage_orders'),
+    path('update-order-status/<int:order_id>/', views.update_order_status, name='update_order_status'),
 ]
 

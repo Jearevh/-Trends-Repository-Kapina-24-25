@@ -31,6 +31,13 @@
             </div>
         </a>
 
+        <a href="{% url 'manage_orders' %}" class="nav-link">
+            <div class="nav-item {% if request.resolver_match.url_name == 'manage_orders' %}active{% endif %}">
+                <img src="{% static 'images/img_materialsymbolsshoppingcart.svg' %}" alt="Orders Icon" class="nav-icon">
+                <span class="nav-text">Orders</span>
+            </div>
+        </a>
+
         <a href="{% url 'users' %}" class="nav-link">
             <div class="nav-item {% if request.resolver_match.url_name == 'users' %}active{% endif %}">
                 <img src="{% static 'images/img_mdiusers.svg' %}" alt="Users Icon" class="nav-icon">

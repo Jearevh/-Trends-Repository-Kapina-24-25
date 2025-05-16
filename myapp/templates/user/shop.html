@@ -28,15 +28,24 @@
 
         <div class="menu-title">Menu</div>
 
-        <div class="cart">
-            <div class="cart-inner"></div>
-            <div class="cart-title">Your items</div>
-            <div class="cart-items">
-                <!-- Cart items will be dynamically added here via JavaScript -->
-            </div>
-            <div class="cart-divider"></div>
-            <div class="checkout-btn">
-                <div class="checkout-btn-text">Finalize Pre-Order</div>
+        <!-- Order Overview Modal -->
+        <div id="orderModal" class="overlay" style="display: none;">
+            <div class="popup">
+                <div class="popup-content">
+                    <span class="close-modal" onclick="closeOrderModal()">&times;</span>
+                    <h2>Order Overview</h2>
+                    <div id="orderDetails" class="order-details">
+                        <!-- Order items will be listed here -->
+                    </div>
+                    <div class="order-total">
+                        <strong>Total: ₱</strong> <span id="orderTotal">0.00</span>
+                    </div>
+                    <div class="barcode-container">
+                        <img id="barcodeImage" src="" alt="Order Barcode">
+                        <div id="barcodeNumber"></div>
+                    </div>
+                    <button id="confirmOrderBtn" class="confirm-order-btn">Confirm Order</button>
+                </div>
             </div>
         </div>
 
@@ -64,59 +73,177 @@
             </div>
             {% endfor %}
         </div>
+
+        <div class="cart">
+            <div class="cart-title">Your items</div>
+            <div class="cart-items">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+            <div class="cart-total">
+                <strong>Total:</strong> ₱<span id="cartTotal">0.00</span>
+            </div>
+            <button class="finalize-order-btn" onclick="showOrderOverview()">
+                Finalize Pre-Order
+            </button>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cart = {
-                items: [],
-                total: 0
-            };
+    let cartItems = {};
+    let cartTotal = 0;
 
-            // Add to cart functionality
-            document.querySelectorAll('.order-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.dataset.productId;
-                    const productName = this.dataset.productName;
-                    const productPrice = parseFloat(this.dataset.productPrice);
+    function updateCart() {
+        const cartContainer = document.querySelector('.cart-items');
+        cartContainer.innerHTML = '';
+        cartTotal = 0;
 
-                    // Add item to cart
-                    cart.items.push({
-                        id: productId,
-                        name: productName,
-                        price: productPrice
-                    });
-                    cart.total += productPrice;
+        for (const [productId, item] of Object.entries(cartItems)) {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'cart-item';
+            itemElement.innerHTML = `
+                <div class="cart-item-details">
+                    <span class="cart-item-name">${item.name}</span>
+                    <span class="cart-item-price">₱${item.price}</span>
+                </div>
+                <div class="cart-item-quantity">
+                    <button onclick="updateQuantity(${productId}, -1)">-</button>
+                    <span>${item.quantity}</span>
+                    <button onclick="updateQuantity(${productId}, 1)">+</button>
+                </div>
+            `;
+            cartContainer.appendChild(itemElement);
+            cartTotal += item.price * item.quantity;
+        }
 
-                    // Update cart display
-                    updateCartDisplay();
-                });
-            });
+        document.getElementById('cartTotal').textContent = cartTotal.toFixed(2);
+    }
 
-            function updateCartDisplay() {
-                const cartItems = document.querySelector('.cart-items');
-                cartItems.innerHTML = '';
-
-                cart.items.forEach(item => {
-                    const itemElement = document.createElement('div');
-                    itemElement.className = 'cart-item';
-                    itemElement.innerHTML = `
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">₱ ${item.price}</div>
-                    `;
-                    cartItems.appendChild(itemElement);
-                });
+    function updateQuantity(productId, change) {
+        if (cartItems[productId]) {
+            cartItems[productId].quantity += change;
+            if (cartItems[productId].quantity <= 0) {
+                delete cartItems[productId];
             }
+            updateCart();
+        }
+    }
 
-            // Checkout button functionality
-            document.querySelector('.checkout-btn').addEventListener('click', function() {
-                if (cart.items.length === 0) {
-                    alert('Your cart is empty!');
-                    return;
-                }
-                // Add your checkout logic here
-                alert('Proceeding to checkout...');
-            });
+    // Add click event listeners to all order buttons
+    document.querySelectorAll('.order-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const productName = this.dataset.productName;
+            const productPrice = parseFloat(this.dataset.productPrice);
+
+            if (!cartItems[productId]) {
+                cartItems[productId] = {
+                    name: productName,
+                    price: productPrice,
+                    quantity: 0
+                };
+            }
+            cartItems[productId].quantity += 1;
+            updateCart();
         });
+    });
+
+    function generateBarcode() {
+        const barcodeNumber = Math.floor(Math.random() * 10000000000000).toString();
+        JsBarcode("#barcodeImage", barcodeNumber, {
+            format: "CODE128",
+            width: 2,
+            height: 100,
+            displayValue: true
+        });
+        document.getElementById('barcodeNumber').textContent = barcodeNumber;
+        return barcodeNumber;
+    }
+
+    function showOrderOverview() {
+        if (Object.keys(cartItems).length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+
+        const modal = document.getElementById('orderModal');
+        const orderDetails = document.getElementById('orderDetails');
+        orderDetails.innerHTML = '';
+
+        for (const item of Object.values(cartItems)) {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'order-item';
+            itemElement.innerHTML = `
+                <span>${item.name} x${item.quantity}</span>
+                <span>₱${(item.price * item.quantity).toFixed(2)}</span>
+            `;
+            orderDetails.appendChild(itemElement);
+        }
+
+        document.getElementById('orderTotal').textContent = cartTotal.toFixed(2);
+        generateBarcode();
+        modal.style.display = 'flex';
+    }
+
+    function closeOrderModal() {
+        document.getElementById('orderModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside the popup
+    window.onclick = function(event) {
+        const modal = document.getElementById('orderModal');
+        if (event.target === modal) {
+            closeOrderModal();
+        }
+    }
+
+    document.getElementById('confirmOrderBtn').addEventListener('click', function() {
+        const shopId = parseInt("{{ shop.id }}");
+        const orderData = {
+            items: cartItems,
+            total: cartTotal,
+            barcode: document.getElementById('barcodeNumber').textContent,
+            shop_id: shopId
+        };
+
+        fetch('/create-order/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(orderData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order placed successfully!');
+                cartItems = {};
+                updateCart();
+                closeOrderModal();
+            } else {
+                alert('Error placing order: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error placing order. Please try again.');
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
     </script>
 {% endblock %} 

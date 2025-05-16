@@ -1,0 +1,106 @@
+{% extends 'admins/base.html' %}
+{% load static %}
+
+{% block title %}Manage Orders{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="header">
+        <h1 class="page-title">Manage Orders</h1>
+    </div>
+
+    <div class="orders-container">
+        <div class="orders-grid">
+            {% for order in orders %}
+            <div class="order-card" data-order-id="{{ order.id }}">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h3>Order #{{ order.id }}</h3>
+                        <span class="order-date">{{ order.created_at|date:"F j, Y, g:i a" }}</span>
+                    </div>
+                    <div class="order-status {{ order.status }}">
+                        {{ order.get_status_display }}
+                    </div>
+                </div>
+
+                <div class="order-items">
+                    {% for item in order.items.all %}
+                    <div class="order-item">
+                        <span class="item-name">{{ item.product.name }} x{{ item.quantity }}</span>
+                        <span class="item-price">₱{{ item.price }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="order-footer">
+                    <div class="order-total">
+                        <strong>Total:</strong> ₱{{ order.total_amount }}
+                    </div>
+                    <div class="order-barcode">
+                        <strong>Barcode:</strong> {{ order.barcode }}
+                    </div>
+                    <div class="order-actions">
+                        <select class="status-select" onchange="updateOrderStatus({{ order.id }}, this.value)">
+                            {% for status, label in order.STATUS_CHOICES %}
+                            <option value="{{ status }}" {% if order.status == status %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-orders">
+                <p>No orders yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function updateOrderStatus(orderId, newStatus) {
+    fetch(`/update-order-status/${orderId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: `status=${newStatus}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const orderCard = document.querySelector(`.order-card[data-order-id="${orderId}"]`);
+            const statusDiv = orderCard.querySelector('.order-status');
+            statusDiv.className = `order-status ${newStatus}`;
+            statusDiv.textContent = document.querySelector(`option[value="${newStatus}"]`).textContent;
+        } else {
+            alert('Error updating order status: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating order status. Please try again.');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}
+{% endblock %} 

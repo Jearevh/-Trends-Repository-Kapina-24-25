@@ -28,12 +28,13 @@ class ProductForm(forms.ModelForm):
         fields = ['name', 'description', 'price', 'image']
 
     def __init__(self, *args, **kwargs):
+        self.business = kwargs.pop('business', None)
         super().__init__(*args, **kwargs)
         self.fields['description'].required = False
         self.fields['image'].required = False
 
     def clean_name(self):
         name = self.cleaned_data.get('name')
-        if Product.objects.filter(name__iexact=name).exists():
-            raise forms.ValidationError('A product with this name already exists.')
+        if self.business and Product.objects.filter(name__iexact=name, business=self.business).exists():
+            raise forms.ValidationError('A product with this name already exists in your shop.')
         return name 

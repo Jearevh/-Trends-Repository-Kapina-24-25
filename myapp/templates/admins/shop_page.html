@@ -1,65 +1,55 @@
 {% extends 'admins/base.html' %}
 {% load static %}
 
-{% block title %}{{ shop.business_name }} - Shop Page{% endblock %}
+{% block title %}Shop Page{% endblock %}
 
 {% block content %}
-<div class="shop-container">
-    <h1 class="shop-title">{{ shop.business_name }}</h1>
+<div class="manage-users-container">
+    <h1 class="manage-users-title">Manage Users</h1>
     
-    <div class="shop-info-card">
-        <div class="shop-header">
-            <div class="shop-details">
-                <div class="shop-avatar">
-                    {% if shop.logo %}
-                        <img src="{{ shop.logo.url }}" alt="{{ shop.business_name }} Logo">
-                    {% else %}
-                        <div class="default-avatar"></div>
-                    {% endif %}
-                </div>
+    <div class="user-card">
+        <div class="user-header">
+            <div class="user-info">
+                <div class="user-avatar"></div>
                 <div>
-                    <div class="shop-name">{{ shop.business_name }}</div>
-                    <div class="shop-email">{{ shop.user.email }}</div>
+                    <div class="user-name">Jeremy Clarence M. Macatangay</div>
+                    <div class="user-email">jcmacatangay@gmail.com</div>
                 </div>
             </div>
-            <a href="{% url 'inventory' %}" class="manage-inventory-btn">
-                <img src="{% static 'images/edit_icon.svg' %}" alt="Manage Icon" class="manage-icon">
-                Manage Inventory
-            </a>
+            <button class="edit-profile-btn">
+                <img src="{% static 'images/edit_icon.svg' %}" alt="Edit Icon" class="edit-icon">
+                Edit Profile
+            </button>
         </div>
-    </div>
-
-    <div class="products-section">
-        <h2 class="section-title">Your Products</h2>
-        <div class="products-grid">
-            {% for product in products %}
-            <div class="product-card">
-                <div class="product-image">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                    {% else %}
-                        <div class="default-product-image"></div>
-                    {% endif %}
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">{{ product.name }}</h3>
-                    <p class="product-price">₱{{ product.price }}</p>
-                    <p class="product-description">{{ product.description|default:"No description available" }}</p>
-                </div>
+        <div class="user-details">
+            <div class="user-detail">
+                <span class="detail-label">First Name</span>
+                <span class="detail-value">Jeremy Clarence</span>
             </div>
-            {% empty %}
-            <div class="no-products">
-                <p>You haven't added any products yet.</p>
-                <a href="{% url 'addproduct' %}" class="add-product-btn">Add Your First Product</a>
+            <div class="user-detail">
+                <span class="detail-label">Middle Initial</span>
+                <span class="detail-value">M.</span>
             </div>
-            {% endfor %}
+            <div class="user-detail">
+                <span class="detail-label">Last Name</span>
+                <span class="detail-value">Macatangay</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value">Jeremy Clarence</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">Member Since</span>
+                <span class="detail-value">March 5, 2025</span>
+            </div>
         </div>
     </div>
 
     <div class="quick-actions-card">
         <h2 class="quick-actions-title">Quick Actions</h2>
-        <a href="{% url 'addproduct' %}" class="quick-action-btn add-product">Add New Product</a>
-        <a href="{% url 'inventory' %}" class="quick-action-btn manage-inventory">Manage Inventory</a>
+        <button class="quick-action-btn reset-password">Reset Password</button>
+        <button class="quick-action-btn deactivate-account">Deactivate Account</button>
+        <button class="quick-action-btn delete-account">Delete Account</button>
     </div>
 </div>
 {% endblock %}
