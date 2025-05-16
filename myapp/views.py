@@ -34,7 +34,6 @@ def add_product(request):
             product = form.save(commit=False)
             product.business = request.user.businessprofile
             product.save()
-            messages.success(request, 'Product added successfully!')
             return redirect('inventory')
     else:
         form = ProductForm()
