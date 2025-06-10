@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Kapina Inventory Management{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="/static/admin_css/base.css?v=5">
     <link rel="stylesheet" type="text/css" href="/static/admin_css/inventory.css?v=5">
     <link rel="stylesheet" type="text/css" href="/static/admin_css/shop_page.css?v=5">
@@ -33,8 +34,8 @@
 
         <a href="{% url 'users' %}" class="nav-link">
             <div class="nav-item {% if request.resolver_match.url_name == 'users' %}active{% endif %}">
-                <img src="{% static 'images/img_mdiusers.svg' %}" alt="Users Icon" class="nav-icon">
-                <span class="nav-text">Users</span>
+                <img src="{% static 'images/img_mdiusers.svg' %}" alt="Staff Icon" class="nav-icon">
+                <span class="nav-text">Staff</span>
             </div>
         </a>
 
@@ -50,7 +51,7 @@
                     {% if user == user.businessprofile.user %}
                         Owner
                     {% else %}
-                        {{ user.employee_type|title }}
+                        {{ user.userprofile.employee_type|title }}
                     {% endif %}
                 </div>
             </div>
@@ -59,5 +60,9 @@
     <div class="main-content">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Base JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

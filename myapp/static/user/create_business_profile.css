@@ -243,7 +243,12 @@ body {
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 15px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logo-container:hover {
+    opacity: 0.9;
 }
 
 .logo-icon {

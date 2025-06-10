@@ -1,44 +1,106 @@
-{% extends 'user/base.html' %}
 {% load static %}
 
 {% block title %}Register - Kapina{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'user/login.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
 {% block content %}
-<div class="register-container">
-    <div class="register-box">
-        <h1>Create Your Account</h1>
-        <form method="post" class="register-form">
-            {% csrf_token %}
-            {% if messages %}
-            <div class="error-message">
-                {% for message in messages %}
-                    {{ message }}<br>
+<div class="main-content">
+    <!-- Header Section -->
+    <div class="header">
+        <div class="header-content">
+            <a href="{% url 'landing' %}" class="logo">
+                <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo">
+            </a>
+        </div>
+
+        <div class="profile-container">
+            <div class="profile-btn" onclick="toggleDropdown(event)">
+                <i class="fas fa-user-circle"></i>
+            </div>            
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="{% url 'login' %}" class="dropdown-item">Login</a>
+                <a href="{% url 'register' %}" class="dropdown-item">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-divider"></div>
+
+    <div class="signup-container">
+        <!-- Left Panel - Illustration -->
+        <div class="illustration-panel">
+            <div class="illustration-content">
+                <h1 class="illustration-title">Join Us!</h1>
+                <p class="tagline">Start Your Coffee Adventure Today</p>
+                <div class="image-group">
+                    <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo" class="main-illustration">
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Register Form -->
+        <div class="form-panel">
+            <h2 class="form-title">Create Your Account</h2>
+            
+            {% if form.username.errors %}
+            <div class="form-errors">
+                {% for error in form.username.errors %}
+                    <div class="error-message">{{ error }}</div>
                 {% endfor %}
             </div>
             {% endif %}
-            <div class="form-group">
-                <label for="id_username">Username</label>
-                <input type="text" name="username" id="id_username" class="form-control" required>
+
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_username">Username</label>
+                    <input type="text" name="username" id="id_username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_email">Email</label>
+                    <input type="email" name="email" id="id_email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password1">Password</label>
+                    <input type="password" name="password1" id="id_password1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password2">Confirm Password</label>
+                    <input type="password" name="password2" id="id_password2" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+
+            <div class="form-footer">
+                <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
             </div>
-            <div class="form-group">
-                <label for="id_password1">Password</label>
-                <input type="password" name="password1" id="id_password1" class="form-control" required>
-                <small class="form-text text-muted">
-                    Your password must contain at least 8 characters and can't be entirely numeric.
-                </small>
-            </div>
-            <div class="form-group">
-                <label for="id_password2">Confirm Password</label>
-                <input type="password" name="password2" id="id_password2" class="form-control" required>
-                <small class="form-text text-muted">
-                    Enter the same password as before, for verification.
-                </small>
-            </div>
-            <button type="submit" class="register-btn">Sign Up</button>
-        </form>
-        <div class="register-footer">
-            <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
         </div>
     </div>
 </div>
+
+<script>
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('profileDropdown');
+        const profileBtn = document.querySelector('.profile-btn');
+        if (!profileBtn.contains(event.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>
 {% endblock %} 

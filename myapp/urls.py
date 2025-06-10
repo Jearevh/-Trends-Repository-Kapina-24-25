@@ -22,5 +22,10 @@ urlpatterns = [
     path('get-order-details/', views.get_order_details, name='get_order_details'),
     path('shop/<int:shop_id>/create-order/', views.create_order, name='create_order'),
     path('order/<int:order_id>/', views.order_overview, name='order_overview'),
+    path('remove_authorized_user/', views.remove_authorized_user, name='remove_authorized_user'),
+    path('remove_gallery_image/<int:image_id>/', views.remove_gallery_image, name='remove_gallery_image'),
+    path('remove_main_image/', views.remove_main_image, name='remove_main_image'),
+    path('test/', views.test_view, name='test'),
+    path('remove_logo/', views.remove_logo, name='remove_logo'),
 ]
 

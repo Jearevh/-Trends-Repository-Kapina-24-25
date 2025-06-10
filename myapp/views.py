@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .forms import UserRegistrationForm, BusinessProfileForm, ProductForm, UserProfileForm, AddAuthorizedUserForm
-from .models import BusinessProfile, Product, Order, OrderItem
+from .forms import UserRegistrationForm, BusinessProfileForm, ProductForm, UserProfileForm, AddAuthorizedUserForm, BusinessProfileUpdateForm, BusinessHoursForm, BusinessImageForm
+from .models import BusinessProfile, Product, Order, OrderItem, BusinessHours, BusinessImage, UserProfile
 from datetime import datetime
 from django.db.models import Q
 from django.utils import timezone
@@ -20,11 +20,16 @@ import random
 import base64
 from io import BytesIO
 from decimal import Decimal
+from django.forms import modelformset_factory
 
 def index(request):
     return render(request, 'admins/base.html')
 
 def inventory(request):
+    # Clear any existing messages
+    storage = messages.get_messages(request)
+    storage.used = True
+    
     # Check if user has a business profile
     if not hasattr(request.user, 'businessprofile'):
         messages.error(request, 'You need to create a business profile first.')
@@ -35,6 +40,10 @@ def inventory(request):
     return render(request, 'admins/inventory.html', {'products': products})
 
 def landing(request):
+    # Clear any existing messages
+    storage = messages.get_messages(request)
+    storage.used = True
+    
     query = request.GET.get('q', '')
     search_type = request.GET.get('type', '')
     
@@ -82,7 +91,7 @@ def add_product(request):
         return redirect('create_business_profile')
         
     if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
+        form = ProductForm(request.POST, request.FILES, business=request.user.businessprofile)
         if form.is_valid():
             try:
                 product = form.save(commit=False)
@@ -93,28 +102,140 @@ def add_product(request):
             except Exception as e:
                 messages.error(request, f'Error adding product: {str(e)}')
         else:
-            messages.error(request, 'Please correct the errors below.')
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
     else:
-        form = ProductForm()
+        form = ProductForm(business=request.user.businessprofile)
+    
     return render(request, 'admins/addproduct.html', {'form': form})
 
 @login_required
 def shop_page(request):
-    # Get the business profile for the logged-in user
     try:
         shop = request.user.businessprofile
-        # Get all products for this business
         products = Product.objects.filter(business=shop)
+        gallery_images = shop.gallery_images.all()
+        
+        if request.method == 'POST':
+            # Handle basic info
+            shop.business_name = request.POST.get('business_name')
+            shop.address = request.POST.get('address')
+            shop.status = request.POST.get('status')
+            shop.tags = request.POST.get('tags')
+            
+            # Parse and save operating hours
+            hours_str = request.POST.get('hours', '')  # e.g. "9:00 AM - 5:00 PM"
+            if hours_str:
+                try:
+                    # Parse the hours string
+                    opening, closing = hours_str.split('-')
+                    opening = opening.strip()
+                    closing = closing.strip()
+                    
+                    # Convert to 24-hour format
+                    opening_time = datetime.strptime(opening, '%I:%M %p').strftime('%H:%M')
+                    closing_time = datetime.strptime(closing, '%I:%M %p').strftime('%H:%M')
+                    
+                    # Update or create BusinessHours for each day
+                    days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+                    for day in days:
+                        BusinessHours.objects.update_or_create(
+                            business=shop,
+                            day=day,
+                            defaults={
+                                'opening_time': opening_time,
+                                'closing_time': closing_time,
+                                'is_closed': False
+                            }
+                        )
+                except Exception as e:
+                    print(f"Error saving hours: {str(e)}")
+            
+            # Handle main image
+            if request.FILES.get('main_image'):
+                shop.main_image = request.FILES['main_image']
+            
+            # Handle logo upload
+            if request.FILES.get('logo'):
+                shop.logo = request.FILES['logo']
+            
+            shop.save()
+
+            # Handle gallery images
+            gallery_images = request.FILES.getlist('gallery_images')
+            current_count = shop.gallery_images.count()
+            
+            if gallery_images and current_count < 4:
+                remaining_slots = 4 - current_count
+                for image in gallery_images[:remaining_slots]:
+                    try:
+                        if not image.content_type.startswith('image/'):
+                            raise ValueError(f"File {image.name} is not an image")
+                        
+                        BusinessImage.objects.create(
+                            business=shop,
+                            image=image
+                        )
+                    except Exception as e:
+                        return JsonResponse({
+                            'error': f'Error saving gallery image {image.name}: {str(e)}'
+                        }, status=400)
+
+            # Return updated data for AJAX requests
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                # Get the current day's hours
+                current_day = datetime.now().strftime('%A').lower()
+                current_hours = shop.operating_hours.filter(day=current_day).first()
+                hours_display = "Hours not specified"
+                
+                if current_hours:
+                    opening = datetime.strptime(current_hours.opening_time, '%H:%M').strftime('%I:%M %p')
+                    closing = datetime.strptime(current_hours.closing_time, '%H:%M').strftime('%I:%M %p')
+                    hours_display = f"{opening} - {closing}"
+                
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Shop details updated successfully',
+                    'data': {
+                        'business_name': shop.business_name,
+                        'address': shop.address,
+                        'hours': hours_display,
+                        'tags': shop.tags,
+                        'status': shop.status,
+                        'main_image_url': shop.main_image.url if shop.main_image else None,
+                        'logo_url': shop.logo.url if shop.logo else None,
+                    }
+                })
+            else:
+                messages.success(request, 'Shop details updated successfully!')
+                return redirect('shop_page')
+        
+        # Get current hours for display
+        current_day = datetime.now().strftime('%A').lower()
+        current_hours = shop.operating_hours.filter(day=current_day).first()
+        hours_display = "8:00 AM - 11:00 PM"  # Default hours
+        
+        if current_hours:
+            opening = datetime.strptime(current_hours.opening_time, '%H:%M').strftime('%I:%M %p')
+            closing = datetime.strptime(current_hours.closing_time, '%H:%M').strftime('%I:%M %p')
+            hours_display = f"{opening} - {closing}"
         
         context = {
-            'shop': shop,
+            'business': shop,
             'products': products,
-            'owner': shop.user,  # Pass the business owner's information
+            'gallery_images': gallery_images,
+            'hours': hours_display,
         }
         return render(request, 'admins/shop_page.html', context)
     except BusinessProfile.DoesNotExist:
         messages.error(request, 'You need to create a business profile first.')
         return redirect('create_business_profile')
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        return JsonResponse({
+            'error': f'Error updating shop details: {str(e)}'
+        }, status=500)
 
 @login_required
 def users(request):
@@ -137,7 +258,6 @@ def users(request):
             form = AddAuthorizedUserForm(request.POST)
             if form.is_valid():
                 user = form.cleaned_data['email_or_username']
-                employee_type = form.cleaned_data['employee_type']
                 
                 # Check if user is already authorized
                 if user in authorized_users:
@@ -145,10 +265,6 @@ def users(request):
                 else:
                     # Add user to authorized users
                     request.user.businessprofile.authorized_users.add(user)
-                    # Set employee type
-                    user.employee_type = employee_type
-                    user.save()
-                    messages.success(request, f'Successfully authorized {user.username}.')
                     return redirect('users')
         else:
             messages.error(request, 'Only the business owner can add authorized users.')
@@ -169,15 +285,13 @@ def shop_detail_view(request, shop_id):
         # Only get products that belong to this specific shop
         products = Product.objects.filter(business=shop)
         
-        # Get shop status (you can add this logic based on business hours)
-        current_time = datetime.now().time()
-        shop_status = "OPEN"  # You can add logic to determine if shop is open based on hours
+        # Get shop status from the model
+        shop_status = shop.get_status_display()
         
         context = {
             'shop': shop,
             'products': products,
             'shop_status': shop_status,
-            'current_time': current_time,
         }
         return render(request, 'user/shop.html', context)
     except Exception as e:
@@ -186,57 +300,40 @@ def shop_detail_view(request, shop_id):
 
 def register(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        
-        if not username or not password1 or not password2:
-            messages.error(request, 'All fields are required.')
-            return render(request, 'user/register.html')
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            try:
+                user = form.save()
+                login(request, user)
+                messages.success(request, 'Registration successful!')
+                return redirect('landing')
+            except Exception as e:
+                messages.error(request, f'Error creating user: {str(e)}')
+    else:
+        form = UserRegistrationForm()
             
-        if password1 != password2:
-            messages.error(request, 'Passwords do not match.')
-            return render(request, 'user/register.html')
-            
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists.')
-            return render(request, 'user/register.html')
-            
-        if len(password1) < 8:
-            messages.error(request, 'Password must be at least 8 characters long.')
-            return render(request, 'user/register.html')
-            
-        try:
-            user = User.objects.create_user(username=username, password=password1)
-            login(request, user)
-            messages.success(request, 'Registration successful!')
-            return redirect('landing')
-        except Exception as e:
-            messages.error(request, f'Error creating user: {str(e)}')
-            return render(request, 'user/register.html')
-            
-    return render(request, 'user/register.html')
+    return render(request, 'user/register.html', {'form': form})
 
 @login_required
 def create_business_profile(request):
     if request.method == 'POST':
-        form = BusinessProfileForm(request.POST)
-        if form.is_valid():
-            try:
-                business_profile = form.save()
-                # Log the user in
-                user = authenticate(
-                    username=form.cleaned_data['username'],
-                    password=form.cleaned_data['password']
-                )
-                if user:
-                    login(request, user)
-                return redirect('shop_page')
-            except Exception as e:
-                form.add_error(None, str(e))
-    else:
-        form = BusinessProfileForm()
-    return render(request, 'user/create_business_profile.html', {'form': form})
+        try:
+            # Create or update business profile
+            business_profile = BusinessProfile.objects.create(
+                user=request.user,
+                business_name=request.POST.get('business_name'),
+                address=request.POST.get('address'),
+                hours=request.POST.get('operating_hours'),  # Use the simple hours field
+            )
+            
+            messages.success(request, 'Business profile created successfully!')
+            return redirect('shop_page')
+            
+        except Exception as e:
+            messages.error(request, f'Error creating business profile: {str(e)}')
+            return redirect('create_business_profile')
+            
+    return render(request, 'user/create_business_profile.html')
 
 def custom_login(request):
     # Clear any existing messages
@@ -250,10 +347,14 @@ def custom_login(request):
         if user is not None:
             login(request, user)
             # Create UserProfile if it doesn't exist
-            if not hasattr(user, 'userprofile'):
-                from .models import UserProfile
-                UserProfile.objects.create(user=user)
-            return redirect('landing')
+            UserProfile.objects.get_or_create(
+                user=user,
+                defaults={'employee_type': 'staff'}
+            )
+            
+            # Get the next URL if it exists
+            next_url = request.GET.get('next', 'landing')
+            return redirect(next_url)
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'user/login.html')
@@ -272,28 +373,49 @@ def update_product(request, product_id):
         return JsonResponse({'error': 'You do not have permission to update this product'}, status=403)
     
     if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES, instance=product)
+        # Check if the new name already exists for this business
+        new_name = request.POST.get('name')
+        if new_name:
+            existing_product = Product.objects.filter(
+                name__iexact=new_name,
+                business=request.user.businessprofile
+            ).exclude(id=product_id).first()
+            
+            if existing_product:
+                return JsonResponse({
+                    'error': f'A product with the name "{new_name}" already exists in your business.'
+                }, status=400)
+        
+        form = ProductForm(request.POST, request.FILES, instance=product, business=request.user.businessprofile)
         if form.is_valid():
             try:
                 # If a new image is uploaded, delete the old one
                 if 'image' in request.FILES and product.image:
-                    # Delete the old image file
-                    if os.path.isfile(product.image.path):
-                        os.remove(product.image.path)
-                form.save()
+                    try:
+                        # Delete the old image file if it exists
+                        if os.path.isfile(product.image.path):
+                            os.remove(product.image.path)
+                    except Exception as e:
+                        print(f"Error deleting old image: {e}")
+                
+                updated_product = form.save()
                 return JsonResponse({
                     'success': True,
                     'message': 'Product updated successfully',
                     'product': {
-                        'name': product.name,
-                        'description': product.description,
-                        'price': str(product.price),
-                        'image_url': product.image.url if product.image else None
+                        'name': updated_product.name,
+                        'description': updated_product.description,
+                        'price': str(updated_product.price),
+                        'image_url': updated_product.image.url if updated_product.image else None
                     }
                 })
             except Exception as e:
-                return JsonResponse({'error': str(e)}, status=500)
-        return JsonResponse({'error': form.errors}, status=400)
+                return JsonResponse({'error': str(e)}, status=400)
+        else:
+            errors = {}
+            for field, error_list in form.errors.items():
+                errors[field] = error_list[0]
+            return JsonResponse({'error': errors}, status=400)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
@@ -494,3 +616,141 @@ def order_overview(request, order_id):
     }
     
     return render(request, 'user/order_overview.html', context)
+
+@login_required
+@require_POST
+def remove_authorized_user(request):
+    if not request.user.businessprofile or request.user != request.user.businessprofile.user:
+        return JsonResponse({'error': 'Only the business owner can remove authorized users'}, status=403)
+    
+    user_id = request.POST.get('user_id')
+    if not user_id:
+        return JsonResponse({'error': 'User ID is required'}, status=400)
+        
+    try:
+        user = User.objects.get(id=user_id)
+        # Don't allow removing the owner
+        if user == request.user.businessprofile.user:
+            return JsonResponse({'error': 'Cannot remove the business owner'}, status=400)
+            
+        request.user.businessprofile.authorized_users.remove(user)
+        return JsonResponse({'success': True})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def manage_shop(request):
+    if not hasattr(request.user, 'businessprofile'):
+        messages.error(request, 'You need to create a business profile first.')
+        return redirect('create_business_profile')
+
+    business = request.user.businessprofile
+
+    if request.method == 'POST':
+        form = BusinessProfileUpdateForm(request.POST, request.FILES, instance=business)
+        
+        try:
+            if form.is_valid():
+                # Save the main form
+                business_profile = form.save()
+                
+                # Update hours if provided
+                if 'hours' in request.POST:
+                    business_profile.hours = request.POST['hours']
+                    business_profile.save()
+
+                # Handle gallery images
+                gallery_images = request.FILES.getlist('gallery_images')
+                if gallery_images:
+                    for image in gallery_images:
+                        try:
+                            print(f"Processing image: {image.name}, size: {image.size}")
+                            # Validate image
+                            if not image.content_type.startswith('image/'):
+                                raise ValueError(f"File {image.name} is not an image")
+                            
+                            # Create the gallery image
+                            new_image = BusinessImage.objects.create(
+                                business=business,
+                                image=image
+                            )
+                            print(f"Created new image: {new_image.id}, path: {new_image.image.path}")
+                        except Exception as e:
+                            print(f"Error saving image {image.name}: {str(e)}")
+                            return JsonResponse({
+                                'error': f'Error saving gallery image {image.name}: {str(e)}'
+                            }, status=400)
+
+                messages.success(request, 'Shop details updated successfully.')
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Shop details updated successfully'
+                })
+            else:
+                print("Form validation errors:", form.errors)
+                return JsonResponse({'error': form.errors}, status=400)
+        except Exception as e:
+            print(f"Unexpected error: {str(e)}")
+            return JsonResponse({
+                'error': f'Error updating shop details: {str(e)}'
+            }, status=500)
+
+    else:
+        form = BusinessProfileUpdateForm(instance=business)
+
+    context = {
+        'form': form,
+        'business': business
+    }
+    return render(request, 'admins/shop_page.html', context)
+
+@login_required
+@require_POST
+def remove_gallery_image(request, image_id):
+    try:
+        image = BusinessImage.objects.get(id=image_id)
+        if image.business.user != request.user:
+            return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+            
+        # Delete the actual image file
+        if image.image:
+            image.image.delete()
+        
+        # Delete the database record
+        image.delete()
+        return JsonResponse({'success': True})
+    except BusinessImage.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Image not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+def test_view(request):
+    return render(request, 'admins/test.html')
+
+@login_required
+@require_POST
+def remove_main_image(request):
+    try:
+        business = request.user.businessprofile
+        if business.main_image:
+            business.main_image.delete()  # This will delete the file
+            business.main_image = None    # This will clear the field
+            business.save()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@require_POST
+def remove_logo(request):
+    try:
+        business = request.user.businessprofile
+        if business.logo:
+            business.logo.delete()  # This will delete the file
+            business.logo = None    # This will clear the field
+            business.save()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

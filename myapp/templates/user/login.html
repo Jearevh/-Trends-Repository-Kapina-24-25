@@ -1,32 +1,98 @@
-{% extends 'user/base.html' %}
 {% load static %}
 
 {% block title %}Login - Kapina{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'user/login.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
 {% block content %}
-<div class="login-container">
-    <div class="login-box">
-        <h1>Login to Your Account</h1>
-        <form method="post" class="login-form">
-            {% csrf_token %}
-            {% if error_message %}
-            <div class="error-message">
-                {{ error_message }}
+<div class="main-content">
+    <!-- Header Section -->
+    <div class="header">
+        <div class="header-content">
+            <a href="{% url 'landing' %}" class="logo">
+                <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo">
+            </a>
+        </div>
+
+        <div class="profile-container">
+            <div class="profile-btn" onclick="toggleDropdown(event)">
+                <i class="fas fa-user-circle"></i>
+            </div>            
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="{% url 'login' %}" class="dropdown-item">Login</a>
+                <a href="{% url 'register' %}" class="dropdown-item">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-divider"></div>
+
+    <div class="signup-container">
+        <!-- Left Panel - Illustration -->
+        <div class="illustration-panel">
+            <div class="illustration-content">
+                <h1 class="illustration-title">Welcome!</h1>
+                <p class="tagline">Your Coffee Journey Starts Here</p>
+                <div class="image-group">
+                    <img src="{% static 'images/KapinaLogo.png' %}" alt="Kapina Logo" class="main-illustration">
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Login Form -->
+        <div class="form-panel">
+            <h2 class="form-title">Login to Your Account</h2>
+            
+            {% if form.errors %}
+            <div class="form-errors">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
             </div>
             {% endif %}
+
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                    <label for="id_username">Username</label>
+                    <input type="text" name="username" id="id_username" required>
             </div>
+
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                    <label for="id_password">Password</label>
+                    <input type="password" name="password" id="id_password" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+
+            <div class="form-footer">
+                <p>Don't have an account? <a href="{% url 'register' %}">Sign up</a></p>
             </div>
-            <button type="submit" class="login-btn">Login</button>
-        </form>
-        <div class="login-footer">
-            <p>Don't have an account? <a href="{% url 'register' %}">Sign up</a></p>
         </div>
     </div>
 </div>
+
+<script>
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('profileDropdown');
+        const profileBtn = document.querySelector('.profile-btn');
+        if (!profileBtn.contains(event.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>
 {% endblock %} 

@@ -1,3 +1,6 @@
+{% load static %}
+{% load custom_filters %}
+
 {% for shop in shops %}
 <a href="{% url 'shop_detail' shop.id %}" class="card-link">
     <div class="card">
@@ -11,7 +14,7 @@
             <div class="card-location-hours">
                 <div class="card-address">{{ shop.address }}</div>
                 <div class="separator"></div>
-                <div class="card-hours">{{ shop.hours|default:"Hours not specified" }}</div>
+                <div class="card-hours">{{ shop|format_business_hours }}</div>
             </div>
         </div>
     </div>

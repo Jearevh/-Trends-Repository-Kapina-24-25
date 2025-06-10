@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS myapp_orderitem CASCADE;
+DROP TABLE IF EXISTS myapp_order CASCADE;
+DROP TABLE IF EXISTS myapp_product CASCADE;
+DROP TABLE IF EXISTS myapp_businessimage CASCADE;
+DROP TABLE IF EXISTS myapp_businesshours CASCADE;
+DROP TABLE IF EXISTS myapp_businessprofile_authorized_users CASCADE;
+DROP TABLE IF EXISTS myapp_businessprofile CASCADE;
+DROP TABLE IF EXISTS myapp_userprofile CASCADE;
+DROP TABLE IF EXISTS django_migrations CASCADE; 

@@ -1,68 +1,418 @@
 {% extends 'user/base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}{{ shop.business_name }}{% endblock %}
 
 {% block content %}
+<style>
+    .container {
+        width: 1305px;
+        margin: 0 auto;
+        padding: 20px;
+        padding-top: 80px;
+        font-family: 'Inter', sans-serif;
+        position: relative;
+    }
+
+    .shop-header {
+        position: relative;
+        height: 600px;
+        margin-bottom: 40px;
+    }
+
+    .shop-title {
+        color: #222222;
+        font-size: 32px;
+        font-weight: 600;
+        margin-top: 60px;
+        margin-bottom: 30px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .shop-address {
+        color: #222222;
+        font-size: 30px;
+        font-weight: 600;
+        position: absolute;
+        left: 0;
+        bottom: 60px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .shop-hours {
+        position: absolute;
+        right: 0;
+        bottom: 60px;
+        text-align: right;
+        color: #222222;
+        font-size: 30px;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .shop-tags {
+        color: #222222;
+        font-size: 20px;
+        font-weight: 200;
+        position: absolute;
+        left: 0;
+        bottom: 20px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .shop-status {
+        position: absolute;
+        right: 0;
+        bottom: 20px;
+        color: #222222;
+        font-size: 20px;
+        font-weight: 200;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .gallery-container {
+        display: grid;
+        grid-template-columns: 648px 307px 307px;
+        grid-template-rows: 175px 175px;
+        gap: 15px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+
+    .gallery-main {
+        grid-row: 1 / span 2;
+        width: 648px;
+        height: 365px;
+        border-radius: 12px 0 0 12px;
+        object-fit: cover;
+    }
+
+    .gallery-item {
+        width: 307px;
+        height: 175px;
+        object-fit: cover;
+    }
+
+    .gallery-item:nth-child(2) { border-radius: 0 12px 0 0; }
+    .gallery-item:last-child { border-radius: 0 0 12px 0; }
+
+    .menu-section {
+        display: flex;
+        gap: 40px;
+        margin-top: 20px;
+        position: relative;
+        padding-right: 350px;
+      
+    }
+
+    .menu-content {
+        flex: 1;
+    }
+
+    .menu-title {
+        color: #222222;
+        font-size: 30px;
+        font-weight: 600;
+        margin-bottom: 30px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 400px);
+        gap: 40px;
+        max-width: 1277px;
+    }
+
+    .menu-item {
+        width: 400px;
+        height: 200px;
+        position: relative;
+        background: rgba(238.96, 238.96, 238.96, 0);
+        border-radius: 12px;
+        border: 0.5px solid #A6A4A4;
+        margin-bottom: 20px;
+    }
+
+    .menu-item__image {
+        width: 156px;
+        height: 173px;
+        left: 230px;
+        top: 13px;
+        position: absolute;
+        border-radius: 14px;
+        object-fit: cover;
+    }
+
+    .menu-item__name {
+        width: 155px;
+        height: 31px;
+        left: 11px;
+        top: 13px;
+        position: absolute;
+        color: #222222;
+        font-size: 20px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        word-wrap: break-word;
+    }
+
+    .menu-item__price {
+        width: 155px;
+        height: 37px;
+        left: 166px;
+        top: 13px;
+        position: absolute;
+        color: #222222;
+        font-size: 20px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 200;
+        word-wrap: break-word;
+    }
+
+    .menu-item__description {
+        width: 177px;
+        height: 39px;
+        left: 10px;
+        top: 65px;
+        position: absolute;
+        color: black;
+        font-size: 14px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 100;
+        word-wrap: break-word;
+    }
+
+    .menu-item__order-btn {
+        padding: 16px 24px;
+        left: 99px;
+        top: 129px;
+        position: absolute;
+        background: rgba(111, 78, 55, 0.93);
+        border-radius: 8px;
+        justify-content: center;
+        align-items: center;
+        display: inline-flex;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .menu-item__order-text {
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .cart-section {
+        width: 350px;
+        height: 510px;
+        background: rgba(217, 217, 217, 0);
+        border-radius: 10px;
+        border: 0.5px solid #A6A4A4;
+        padding: 22px 20px;
+        position: absolute;
+        right: -140px;
+        top: 0;
+    }
+
+    .cart-title {
+        color: #222222;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .cart-items {
+        max-height: 350px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .cart-item img {
+        width: 48px;
+        height: 54px;
+        border-radius: 10px;
+        margin-right: 12px;
+    }
+
+    .cart-item-details {
+        flex: 1;
+    }
+
+    .cart-item-name {
+        color: #222222;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .cart-item-price {
+        color: #222222;
+        font-size: 14px;
+        font-weight: 200;
+    }
+
+    .cart-item-remove {
+        margin-left: 10px;
+        padding: 5px;
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .cart-total {
+        padding: 15px 0;
+        font-weight: 600;
+        text-align: right;
+        border-top: 1px solid #eee;
+        margin-top: 10px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .cart-checkout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 16px 24px;
+        background: rgba(111, 78, 55, 0.93);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .cart-checkout-btn:hover {
+        background: rgba(111, 78, 55, 1);
+    }
+
+    .cart-checkout-text {
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: white;
+        width: 90%;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 12px;
+        position: relative;
+        z-index: 1001;
+    }
+
+    .close-btn {
+        float: right;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .modal-title {
+        margin-bottom: 20px;
+    }
+
+    /* Add styles for empty cart message */
+    .cart-empty {
+        text-align: center;
+        color: #666;
+        padding: 20px;
+        font-style: italic;
+        font-family: 'Inter', sans-serif;
+    }
+</style>
+
     <div class="container">
         <div class="shop-header">
-            <div class="shop-name">{{ shop.business_name }}</div>
-            <div class="shop-address">{{ shop.address }}</div>
-            <div class="shop-hours">{{ shop.hours|default:"Hours not specified" }}</div>
-            <div class="shop-tags">{{ shop.description|truncatewords:10 }}</div>
-            <div class="shop-status">{{ shop_status }}</div>
-            <div class="favorite">
-                <span style="color: #222222; font-size: 20px; font-weight: 200;">♡ </span>
-                <span class="favorite-text">Favorite</span>
-            </div>
-            {% if shop.logo %}
-                <img class="shop-main-img" src="{{ shop.logo.url }}" alt="{{ shop.business_name }}" />
+        <div class="shop-title">{{ shop.business_name }}</div>
+            
+            <!-- Gallery Section -->
+        <div class="gallery-container">
+            {% if shop.main_image %}
+                <img class="gallery-main" src="{{ shop.main_image.url }}" alt="{{ shop.business_name }} Main Image" />
             {% else %}
-                <img class="shop-main-img" src="https://placehold.co/648x365" alt="{{ shop.business_name }}" />
+                <img class="gallery-main" src="https://placehold.co/648x365" alt="{{ shop.business_name }} Main Image" />
             {% endif %}
-            <img class="shop-sub-img sub-img-1" src="https://placehold.co/307x175" alt="{{ shop.business_name }} 1" />
-            <img class="shop-sub-img sub-img-2" src="https://placehold.co/307x175" alt="{{ shop.business_name }} 2" />
-            <img class="shop-sub-img sub-img-3" src="https://placehold.co/307x175" alt="{{ shop.business_name }} 3" />
-            <img class="shop-sub-img sub-img-4" src="https://placehold.co/307x175" alt="{{ shop.business_name }} 4" />
+
+            {% with shop.gallery_images.all|slice:":4" as gallery_images %}
+                {% for image in gallery_images %}
+                    <img class="gallery-item" src="{{ image.image.url }}" alt="Gallery Image {{ forloop.counter }}" />
+                {% empty %}
+                    <img class="gallery-item" src="https://placehold.co/307x175" alt="Placeholder 1" />
+                    <img class="gallery-item" src="https://placehold.co/307x175" alt="Placeholder 2" />
+                    <img class="gallery-item" src="https://placehold.co/307x175" alt="Placeholder 3" />
+                    <img class="gallery-item" src="https://placehold.co/307x175" alt="Placeholder 4" />
+                {% endfor %}
+            {% endwith %}
         </div>
 
-        <div class="menu-title">Menu</div>
+        <div class="shop-address">{{ shop.address }}</div>
+        <div class="shop-hours">{{ shop|format_business_hours }}</div>
+        <div class="shop-tags">{{ shop.tags|default:"Pure Beans • Iced Lattes • To-Go Coffee" }}</div>
+        <div class="shop-status">{{ shop.get_status_display }}</div>
+    </div>
 
-        <div class="cart">
-            <div class="cart-inner"></div>
+        <div class="menu-section">
+        <div class="menu-content">
+        <div class="menu-title">Menu</div>
+            <div class="menu-grid">
+                {% for product in products %}
+                <div class="menu-item">
+                    <div class="menu-item__name">{{ product.name }}</div>
+                    <div class="menu-item__price">₱ {{ product.price }}</div>
+                    <div class="menu-item__description">{{ product.description|default:"--Recommended-- Flavor profile: rich, balanced, smooth" }}</div>
+                    {% if product.image %}
+                        <img class="menu-item__image" src="{{ product.image.url }}" alt="{{ product.name }}" />
+                    {% else %}
+                        <img class="menu-item__image" src="https://placehold.co/156x173" alt="{{ product.name }}" />
+                    {% endif %}
+                    <div class="menu-item__order-btn" data-product-id="{{ product.id }}" 
+                         data-product-name="{{ product.name }}" 
+                         data-product-price="{{ product.price }}" 
+                         onclick="addToCart(this)">
+                        <div class="menu-item__order-text">Pre-order</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Cart Section -->
+        <div class="cart-section">
             <div class="cart-title">Your items</div>
             <div class="cart-items">
                 <!-- Cart items will be dynamically added here via JavaScript -->
             </div>
             <div class="cart-divider"></div>
-            <div class="checkout-btn">
-                <div class="checkout-btn-text">Finalize Pre-Order</div>
-            </div>
-        </div>
-
-        <div class="menu-items-container">
-            {% for product in products %}
-            <div class="menu-item">
-                {% if product.image %}
-                    <img class="menu-item-img" src="{{ product.image.url }}" alt="{{ product.name }}" />
-                {% else %}
-                    <img class="menu-item-img" src="https://placehold.co/156x173" alt="{{ product.name }}" />
-                {% endif %}
-                <div class="menu-item-name">{{ product.name }}</div>
-                <div class="menu-item-price">₱ {{ product.price }}</div>
-                <div class="menu-item-desc">{{ product.description|default:"No description available" }}</div>
-                <div class="order-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}">
-                    <div class="order-btn-text">Pre-order</div>
+                <div class="cart-checkout-btn">
+                    <div class="cart-checkout-text">Finalize Pre-Order</div>
                 </div>
-            </div>
-            {% empty %}
-            <div class="no-products">
-                <p>This shop hasn't added any menu items yet.</p>
-                {% if user.is_authenticated and user.businessprofile == shop %}
-                <a href="{% url 'inventory' %}" class="add-menu-btn">Add Menu Items</a>
-                {% endif %}
-            </div>
-            {% endfor %}
         </div>
     </div>
 
@@ -73,6 +423,7 @@
             <h2 class="modal-title">Order Overview</h2>
             <div class="order-overview">
                 <div class="order-items">
+                        <!-- Order items will be added here -->
                 </div>
                 <div class="order-total"></div>
                 <div class="barcode-container">
@@ -84,19 +435,22 @@
                     <p>{{ shop.address }}</p>
                     <p>Please show this order confirmation when picking up your order.</p>
                 </div>
+                </div>
             </div>
         </div>
     </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const cart = {
+        window.cart = {
                 items: [],
                 total: 0
             };
 
             const modal = document.getElementById('orderModal');
             const closeBtn = document.querySelector('.close-btn');
+        const cartItemsContainer = document.querySelector('.cart-items');
 
             // Close modal when clicking X or outside
             closeBtn.onclick = function() {
@@ -109,93 +463,118 @@
                 }
             }
 
-            // Add to cart functionality
-            document.querySelectorAll('.order-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.dataset.productId;
-                    const productName = this.dataset.productName;
-                    const productPrice = parseFloat(this.dataset.productPrice);
+        // Initialize cart display
+        updateCartDisplay();
+
+        // Add click handler for checkout button
+        document.querySelector('.cart-checkout-btn').addEventListener('click', function() {
+            if (window.cart.items.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+
+            const modal = document.getElementById('orderModal');
+            const orderItems = document.querySelector('.order-items');
+            const orderTotal = document.querySelector('.order-total');
+            
+            // Clear previous items
+            orderItems.innerHTML = '';
+            
+            // Add items to order overview
+            window.cart.items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'order-item';
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" style="width: 48px; height: 54px; border-radius: 10px; margin-right: 12px;" />
+                    <span>${item.name}</span>
+                    <span>₱ ${item.price.toFixed(2)}</span>
+                `;
+                orderItems.appendChild(itemElement);
+            });
+            
+            // Add total
+            orderTotal.textContent = `Total: ₱ ${window.cart.total.toFixed(2)}`;
+            
+            // Generate random order number and barcode
+            const orderNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+            const barcodeContainer = document.querySelector('.barcode-container');
+            barcodeContainer.innerHTML = '<svg id="barcode"></svg>';
+            JsBarcode("#barcode", orderNumber, {
+                format: "CODE128",
+                width: 2,
+                height: 100,
+                displayValue: true
+            });
+            
+            modal.style.display = 'block';
+        });
+    });
+
+    function addToCart(button) {
+        const productId = button.dataset.productId;
+        const productName = button.dataset.productName;
+        const productPrice = parseFloat(button.dataset.productPrice);
+        const productImage = button.closest('.menu-item').querySelector('.menu-item__image').src;
 
                     // Add item to cart
-                    cart.items.push({
+        window.cart.items.push({
                         id: productId,
                         name: productName,
-                        price: productPrice
+            price: productPrice,
+            image: productImage
                     });
-                    cart.total += productPrice;
+        window.cart.total += productPrice;
 
                     // Update cart display
                     updateCartDisplay();
-                });
-            });
+
+        // Show feedback to user
+        button.style.backgroundColor = 'rgba(39, 174, 96, 0.93)';
+        button.querySelector('div').textContent = 'Added!';
+        setTimeout(() => {
+            button.style.backgroundColor = 'rgba(111, 78, 55, 0.93)';
+            button.querySelector('div').textContent = 'Pre-order';
+        }, 1000);
+    }
 
             function updateCartDisplay() {
-                const cartItems = document.querySelector('.cart-items');
-                cartItems.innerHTML = '';
+        const cartItemsContainer = document.querySelector('.cart-items');
+        if (!cartItemsContainer) return;
+        
+        cartItemsContainer.innerHTML = '';
 
-                cart.items.forEach(item => {
+        if (window.cart.items.length === 0) {
+            cartItemsContainer.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+            return;
+        }
+
+        window.cart.items.forEach((item, index) => {
                     const itemElement = document.createElement('div');
                     itemElement.className = 'cart-item';
+            
                     itemElement.innerHTML = `
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">₱ ${item.price.toFixed(2)}</div>
+                <img src="${item.image}" alt="${item.name}" />
+                <div class="cart-item-details">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-price">₱ ${item.price.toFixed(2)}</div>
+                </div>
+                <button onclick="removeFromCart(${index})" class="cart-item-remove">&times;</button>
                     `;
-                    cartItems.appendChild(itemElement);
+            cartItemsContainer.appendChild(itemElement);
                 });
+
+        // Add total
+        const totalElement = document.createElement('div');
+        totalElement.className = 'cart-total';
+        totalElement.innerHTML = `Total: ₱ ${window.cart.total.toFixed(2)}`;
+        cartItemsContainer.appendChild(totalElement);
+    }
+
+    function removeFromCart(index) {
+        const item = window.cart.items[index];
+        window.cart.total -= item.price;
+        window.cart.items.splice(index, 1);
+        updateCartDisplay();
             }
-
-            // Finalize order button functionality
-            document.querySelector('.checkout-btn').addEventListener('click', function() {
-                if (cart.items.length === 0) {
-                    alert('Your cart is empty!');
-                    return;
-                }
-
-                // Generate unique order number
-                const orderNumber = 'ORD-' + Date.now();
-
-                // Update modal content
-                const modalOrderItems = modal.querySelector('.order-items');
-                const modalOrderTotal = modal.querySelector('.order-total');
-                
-                // Clear previous content
-                modalOrderItems.innerHTML = '';
-                
-                // Add items
-                cart.items.forEach(item => {
-                    const itemElement = document.createElement('div');
-                    itemElement.className = 'order-item';
-                    itemElement.innerHTML = `
-                        <div class="item-details">
-                            <div class="item-name">${item.name}</div>
-                            <div class="item-quantity">Quantity: 1</div>
-                        </div>
-                        <div class="item-price">₱ ${item.price.toFixed(2)}</div>
-                    `;
-                    modalOrderItems.appendChild(itemElement);
-                });
-
-                // Update total
-                modalOrderTotal.innerHTML = `Total Amount: ₱ ${cart.total.toFixed(2)}`;
-
-                // Generate and display barcode
-                const barcodeContainer = modal.querySelector('.barcode-container');
-                barcodeContainer.innerHTML = `
-                    <svg id="barcode"></svg>
-                    <div style="margin-top: 10px; color: #666;">${orderNumber}</div>
-                `;
-
-                // Use JsBarcode to generate the barcode
-                JsBarcode("#barcode", orderNumber, {
-                    format: "CODE128",
-                    width: 2,
-                    height: 100,
-                    displayValue: false
-                });
-
-                // Show the modal
-                modal.style.display = 'block';
-            });
-        });
     </script>
 {% endblock %}

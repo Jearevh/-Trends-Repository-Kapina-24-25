@@ -1,7 +1,7 @@
 {% extends 'admins/base.html' %}
 {% load static %}
 
-{% block title %}User Management{% endblock %}
+{% block title %}Staff Management{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'admin_css/users.css' %}">
@@ -152,12 +152,6 @@
         box-shadow: 0 0 0 2px rgba(111, 78, 55, 0.1);
     }
 
-    .action-buttons {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
     .quick-action-btn {
         padding: 8px 16px;
         border: none;
@@ -178,33 +172,13 @@
         background: #5a3d2b;
     }
 
-    .quick-action-btn.reset-password {
-        background: #f8f9fa;
-        color: #333;
-        border: 1px solid #ddd;
-    }
-
-    .quick-action-btn.reset-password:hover {
-        background: #e9ecef;
-    }
-
-    .quick-action-btn.deactivate-account {
-        background: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffeeba;
-    }
-
-    .quick-action-btn.deactivate-account:hover {
-        background: #ffeeba;
-    }
-
-    .quick-action-btn.delete-account {
+    .quick-action-btn.remove-account {
         background: #f8d7da;
         color: #721c24;
         border: 1px solid #f5c6cb;
     }
 
-    .quick-action-btn.delete-account:hover {
+    .quick-action-btn.remove-account:hover {
         background: #f5c6cb;
     }
 </style>
@@ -220,7 +194,7 @@
         </a>
     </div>
 </div>
-<h1 class="page-title">Manage Users</h1>
+<h2 class="page-title">Manage Staff</h2>
 
 {% if is_owner %}
 <div class="quick-actions-card">
@@ -236,20 +210,15 @@
                 <label for="id_employee_type">Employee Type</label>
                 {{ add_user_form.employee_type }}
             </div>
-            <button type="submit" name="add_authorized_user" class="quick-action-btn add-user">Add User</button>
+            <button type="submit" name="add_authorized_user" class="quick-action-btn add-user">Add Staff</button>
         </div>
     </form>
-    <div class="action-buttons">
-        <button class="quick-action-btn reset-password">Reset Password</button>
-        <button class="quick-action-btn deactivate-account">Deactivate Account</button>
-        <button class="quick-action-btn delete-account">Delete Account</button>
-    </div>
 </div>
 {% endif %}
 
 <div class="manage-users-container">
     {% for user in users %}
-    <div class="user-card {% if user == business.user %}owner-card{% endif %}">
+    <div class="user-card {% if user == business.user %}owner-card{% endif %}" data-user-id="{{ user.id }}">
         <div class="user-header">
             <div class="user-info">
                 <div class="user-avatar">
@@ -267,12 +236,18 @@
                     <div class="user-email">{{ user.email }}</div>
                 </div>
             </div>
+            <div class="user-actions">
             {% if user == request.user %}
             <a href="{% url 'update_profile_picture' %}" class="edit-profile-btn">
                 <span>Edit Profile</span>
                 <img src="{% static 'images/img_materialssymbolsedit.svg' %}" alt="Edit" class="edit-icon">
             </a>
+                {% elif is_owner and user != business.user %}
+                <button class="remove-user-btn quick-action-btn remove-account" data-user-id="{{ user.id }}">
+                    Remove User
+                </button>
             {% endif %}
+            </div>
         </div>
 
         <div class="user-details">
@@ -282,13 +257,13 @@
                     {% if user == business.user %}
                         Owner
                     {% else %}
-                        {{ user.employee_type|title }}
+                        {{ user.userprofile.employee_type|title }}
                     {% endif %}
                 </span>
             </div>
             <div class="user-detail">
-                <span class="detail-label">Member Since</span>
-                <span class="detail-value">{{ user.date_joined|date:'F j, Y' }}</span>
+                <span class="detail-label">Employee Since</span>
+                <span class="detail-value">{{ user.userprofile.date_added|date:'F j, Y' }}</span>
             </div>
         </div>
     </div>
@@ -377,6 +352,42 @@
         .catch(error => {
             console.error('Error:', error);
             alert('An error occurred while updating your profile.');
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle remove user button clicks
+        document.querySelectorAll('.remove-user-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.dataset.userId;
+                const userName = this.closest('.user-card').querySelector('.user-name').textContent.trim();
+                
+                if (confirm(`Are you sure you want to remove ${userName} from your business?`)) {
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    
+                    fetch('/remove_authorized_user/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: `user_id=${userId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the user card from the UI
+                            this.closest('.user-card').remove();
+                        } else {
+                            alert(data.error || 'Failed to remove user');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while removing the user');
+                    });
+                }
+            });
         });
     });
 </script>
